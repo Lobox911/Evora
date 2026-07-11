@@ -72,7 +72,8 @@ export async function reserveTierCapacity(tierId: string, qty: number) {
   const result = await db.execute(
     sql`SELECT reserve_tickets(${tierId}::uuid, ${qty}::integer) as reserved`
   );
-  return (result as any)[0]?.reserved === true;
+  const rows = (result as any).rows ?? result;
+  return rows?.[0]?.reserved === true;
 }
 
 export async function releaseTierCapacity(tierId: string, qty: number) {

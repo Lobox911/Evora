@@ -41,35 +41,61 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
   const serviceFee = subtotal > 0 ? Number((subtotal * 0.035 + 1.5).toFixed(2)) : 0;
   const orderTotal = subtotal + serviceFee;
 
-  const handleCheckoutSubmit = (e: React.FormEvent) => {
+  const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email) {
       showAlert('Required Information', 'Please enter your name and email address to proceed with the registration.', 'error');
       return;
     }
 
+    const items = Object.entries(selectedQuantities)
+      .filter(([_, qty]) => qty > 0)
+      .map(([tierId, quantity]) => ({ tierId, quantity }));
+
+    if (items.length === 0) {
+      showAlert('No Tickets Selected', 'Please select at least one ticket.', 'error');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate luxury processing delay
-    setTimeout(() => {
-      const newAttendees: Attendee[] = [];
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId: event.id,
+          buyerName: formData.name,
+          buyerEmail: formData.email,
+          items,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showAlert('Checkout Failed', data.error || 'Something went wrong.', 'error');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Build legacy attendees from API response
+      const newAttendees: Attendee[] = data.tickets.map((t: any) => ({
+        id: t.id,
+        name: t.attendeeName,
+        email: formData.email,
+        ticketClass: t.tierName,
+        ticketPrice: t.priceCents / 100,
+        purchaseDate: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        status: 'registered' as const,
+        eventId: event.id,
+        eventTitle: event.title,
+      }));
+
+      // Update tier counts locally
       const updatedTiers = event.tiers.map((t) => {
         const qty = selectedQuantities[t.id] || 0;
         if (qty > 0) {
-          for (let i = 0; i < qty; i++) {
-            const attendeeId = `at-gen-${Math.floor(100000 + Math.random() * 900000)}`;
-            newAttendees.push({
-              id: attendeeId,
-              name: qty > 1 ? `${formData.name} (Guest ${i + 1})` : formData.name,
-              email: formData.email,
-              ticketClass: t.name,
-              ticketPrice: t.price,
-              purchaseDate: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-              status: 'registered',
-              eventId: event.id,
-              eventTitle: event.title,
-            });
-          }
           return {
             ...t,
             soldCount: t.soldCount + qty,
@@ -79,15 +105,14 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
         return t;
       });
 
-      const updatedEvent: Event = {
-        ...event,
-        tiers: updatedTiers,
-      };
-
+      const updatedEvent: Event = { ...event, tiers: updatedTiers };
       setPurchasedAttendees(newAttendees);
       setIsSubmitting(false);
       onPurchaseSuccess(newAttendees, updatedEvent);
-    }, 2000);
+    } catch (err) {
+      showAlert('Network Error', 'Could not reach the server. Please try again.', 'error');
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -99,72 +124,73 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
 
   if (purchasedAttendees) {
     return (
-      <div className="bg-transparent py-12 flex items-center justify-center transition-colors duration-300">
+      <div className="bg-transparent py-16 flex items-center justify-center transition-colors duration-300">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-xl w-full mx-auto px-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+          className="max-w-lg w-full mx-auto px-4"
         >
-          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 sm:p-10 text-center relative overflow-hidden shadow-md">
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-teal-500 via-indigo-500 to-amber-500 animate-gradient-x" />
-            
-            <div className="mx-auto h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 flex mb-6">
-              <CheckCircle className="h-9 w-9" />
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="mx-auto h-12 w-12 border border-emerald-500 flex items-center justify-center mb-6">
+              <CheckCircle className="h-6 w-6 text-emerald-500" />
             </div>
-
-            <span className="font-mono text-3xs uppercase tracking-[0.3em] text-emerald-600 dark:text-emerald-400 font-bold mb-1 block">
-              TRANSACTION SECURED
-            </span>
-            <h2 className="font-serif text-3xl font-light tracking-tight text-zinc-900 dark:text-white mb-2">
-              Your Ritual Awaits
-            </h2>
-            <p className="text-zinc-600 dark:text-zinc-400 text-2xs sm:text-xs font-light max-w-sm mx-auto mb-8">
-              A confirmation email was dispatched to <span className="text-zinc-900 dark:text-zinc-200 font-medium">{formData.email}</span>. Bring the QR codes below or your mobile ticket to the door.
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-2">
+              Confirmed
             </p>
+            <h2 className="font-serif text-3xl font-light text-zinc-900 dark:text-white mb-3">
+              You're In
+            </h2>
+            <p className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+              Confirmation sent to{' '}
+              <span className="text-zinc-900 dark:text-white">{formData.email}</span>
+            </p>
+          </div>
 
-            {/* Ticket Cards */}
-            <div className="space-y-6 mb-8 text-left">
-              {purchasedAttendees.map((at) => (
-                <div
-                  key={at.id}
-                  className="rounded-xl border border-zinc-200 dark:border-zinc-900 bg-zinc-50 dark:bg-black overflow-hidden relative shadow-sm"
-                >
-                  {/* Decorative card side-cutouts */}
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-2.5 rounded-r-full bg-white dark:bg-zinc-950 border-r border-y border-zinc-200 dark:border-zinc-900" />
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-2.5 rounded-l-full bg-white dark:bg-zinc-950 border-l border-y border-zinc-200 dark:border-zinc-900" />
-
-                  <div className="p-5 flex flex-col sm:flex-row gap-6 items-center justify-between">
-                    <div className="space-y-2 text-center sm:text-left w-full sm:w-auto">
-                      <span className="rounded bg-zinc-200/50 dark:bg-zinc-900 px-2 py-0.5 text-5xs font-mono uppercase tracking-widest text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-800">
+          {/* Tickets */}
+          <div className="space-y-4 mb-10">
+            {purchasedAttendees.map((at, i) => (
+              <motion.div
+                key={at.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 + i * 0.08, ease: [0.23, 1, 0.32, 1] }}
+                className="border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-950"
+              >
+                <div className="p-6 flex items-start justify-between gap-6">
+                  <div className="space-y-3 flex-1 min-w-0">
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400">
                         {at.ticketClass}
                       </span>
-                      <h4 className="font-serif text-lg font-light tracking-tight text-zinc-900 dark:text-white mt-1">
-                        {event.title}
-                      </h4>
-                      <div className="text-5xs font-mono text-zinc-500 uppercase tracking-wider space-y-0.5">
-                        <p>DELEGATE: <span className="text-zinc-800 dark:text-zinc-300">{at.name}</span></p>
-                        <p>ID: <span className="text-zinc-800 dark:text-zinc-300">{at.id}</span></p>
-                        <p>DATE: <span className="text-zinc-800 dark:text-zinc-300">{event.date}</span></p>
-                      </div>
                     </div>
+                    <h4 className="font-serif text-lg font-light text-zinc-900 dark:text-white">
+                      {event.title}
+                    </h4>
+                    <div className="space-y-1">
+                      <p className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+                        {at.name}
+                      </p>
+                      <p className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+                        {event.date} · {event.location}
+                      </p>
+                    </div>
+                  </div>
 
-                    {/* Styled Barcode/QR Code Representation */}
-                    <div className="flex flex-col items-center bg-white border border-zinc-200 dark:border-transparent p-3 rounded-lg shrink-0">
-                      <svg width="85" height="85" viewBox="0 0 100 100" className="text-black">
-                        {/* QR Corners */}
+                  {/* QR Code */}
+                  <div className="shrink-0 flex flex-col items-center">
+                    <div className="w-20 h-20 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+                      <svg width="56" height="56" viewBox="0 0 100 100" className="text-black dark:text-white">
                         <rect x="0" y="0" width="25" height="25" fill="currentColor" />
                         <rect x="3" y="3" width="19" height="19" fill="white" />
                         <rect x="7" y="7" width="11" height="11" fill="currentColor" />
-
                         <rect x="75" y="0" width="25" height="25" fill="currentColor" />
                         <rect x="78" y="3" width="19" height="19" fill="white" />
                         <rect x="82" y="7" width="11" height="11" fill="currentColor" />
-
                         <rect x="0" y="75" width="25" height="25" fill="currentColor" />
                         <rect x="3" y="78" width="19" height="19" fill="white" />
                         <rect x="7" y="82" width="11" height="11" fill="currentColor" />
-
-                        {/* Random mock QR pixels for high fidelity based on ticket id */}
                         <rect x="10" y="35" width="8" height="8" fill="currentColor" />
                         <rect x="25" y="45" width="12" height="6" fill="currentColor" />
                         <rect x="40" y="10" width="6" height="20" fill="currentColor" />
@@ -178,32 +204,31 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                         <rect x="85" y="30" width="10" height="10" fill="currentColor" />
                         <rect x="55" y="85" width="15" height="10" fill="currentColor" />
                       </svg>
-                      <span className="font-mono text-5xs text-zinc-500 uppercase tracking-widest mt-1.5 font-bold">
-                        {at.id}
-                      </span>
                     </div>
+                    <p className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider mt-1.5 truncate max-w-[80px]">
+                      {at.id.slice(0, 8)}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
+              </motion.div>
+            ))}
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleReset}
-                className="flex-1 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white py-3 text-xs font-semibold uppercase tracking-wider transition-colors"
-              >
-                Return to Exploration
-              </button>
-              <button
-                onClick={() => {
-                  showToast('Ticket PDF saved to system downloads.', 'success');
-                }}
-                className="flex-1 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-black py-3 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
-              >
-                <Download className="h-4 w-4" />
-                Download Wallet PDF
-              </button>
-            </div>
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button
+              onClick={handleReset}
+              className="flex-1 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white py-3.5 font-mono text-[10px] font-bold uppercase tracking-wider hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
+            >
+              Back to Events
+            </button>
+            <button
+              onClick={() => showToast('Ticket PDF saved to downloads.', 'success')}
+              className="flex-1 bg-zinc-900 dark:bg-white text-white dark:text-black py-3.5 font-mono text-[10px] font-bold uppercase tracking-wider hover:bg-[#D4573B] dark:hover:bg-[#D4573B] dark:hover:text-white transition-colors flex items-center justify-center gap-2"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Download PDF
+            </button>
           </div>
         </motion.div>
       </div>

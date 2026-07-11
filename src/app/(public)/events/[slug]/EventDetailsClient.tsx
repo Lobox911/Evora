@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import ClientEventDetails from '@/components/ClientEventDetails';
 
@@ -28,14 +29,18 @@ interface LegacyEvent {
 
 export default function EventDetailsClient({ event }: { event: LegacyEvent }) {
   const router = useRouter();
+  const [currentEvent, setCurrentEvent] = useState(event);
+
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50 dark:bg-black transition-colors duration-300">
       <Navbar />
       <main className="flex-grow">
         <ClientEventDetails
-          event={event}
+          event={currentEvent}
           onBack={() => router.push('/')}
-          onPurchaseSuccess={() => {}}
+          onPurchaseSuccess={(attendees, updatedEvent) => {
+            setCurrentEvent(updatedEvent);
+          }}
         />
       </main>
     </div>
