@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import Navbar from '@/components/Navbar';
 import {
   Sliders,
@@ -15,6 +15,8 @@ import {
   Plus,
   PanelLeftClose,
   PanelLeftOpen,
+  Menu,
+  X,
 } from 'lucide-react';
 
 interface DashboardShellProps {
@@ -35,6 +37,7 @@ const NAV_ITEMS = [
 export default function DashboardShell({ user, org, role, children }: DashboardShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (role === 'scanner') {
     if (typeof window !== 'undefined') window.location.href = '/scan';
@@ -54,11 +57,125 @@ export default function DashboardShell({ user, org, role, children }: DashboardS
   const sidebarWidth = collapsed ? 'w-[68px]' : 'w-64';
   const contentPadding = collapsed ? 'md:pl-[68px]' : 'md:pl-64';
 
+  const sidebarContent = (isMobile: boolean) => (
+    <>
+      {/* Org header */}
+      <div className={`px-3 py-5 border-b border-zinc-200 dark:border-zinc-800 mb-4 flex items-center gap-3 ${!isMobile && collapsed ? 'justify-center' : ''}`}>
+        <div className="w-9 h-9 bg-zinc-200 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0">
+          <span className="font-mono text-xs font-bold text-zinc-600 dark:text-zinc-400">
+            {org.name.slice(0, 2).toUpperCase()}
+          </span>
+        </div>
+        {(isMobile || !collapsed) && (
+          <div className="text-left overflow-hidden">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white truncate max-w-[140px]">
+              {org.name}
+            </p>
+            <p className="font-mono text-[9px] text-zinc-500 uppercase tracking-wider">{role}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Nav */}
+      <nav className="flex-1 flex flex-col gap-0.5">
+        {visibleNav.map(({ id, name, icon: Icon, href }) => {
+          const isActive = pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
+          return (
+            <Link
+              key={id}
+              href={href}
+              onClick={() => isMobile && setMobileOpen(false)}
+              title={!isMobile && collapsed ? name : undefined}
+              className={`flex items-center gap-3 px-4 py-3 transition-all duration-150 ${!isMobile && collapsed ? 'justify-center px-2' : ''} ${
+                isActive
+                  ? 'bg-[#D4573B] text-white font-bold scale-95 shadow-sm'
+                  : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-150 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white'
+              }`}
+            >
+              <Icon className="h-4.5 w-4.5 shrink-0" />
+              {(isMobile || !collapsed) && (
+                <span className="font-mono text-[10px] font-bold uppercase tracking-widest">{name}</span>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* CTA + user */}
+      <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
+        <Link
+          href="/dashboard/events?new=true"
+          onClick={() => isMobile && setMobileOpen(false)}
+          className={`w-full bg-zinc-900 dark:bg-zinc-900 text-white font-mono text-[10px] font-bold py-3.5 px-4 hover:bg-[#D4573B] dark:hover:bg-[#D4573B] transition-colors mb-4 uppercase tracking-wider flex justify-center items-center gap-2 ${!isMobile && collapsed ? 'px-2' : ''}`}
+        >
+          <Plus className="h-4 w-4 shrink-0" />
+          {(isMobile || !collapsed) && <span>Create Event</span>}
+        </Link>
+        <div className={`flex items-center gap-3 px-3 py-2 ${!isMobile && collapsed ? 'justify-center px-0' : ''}`}>
+          <UserButton afterSignOutUrl="/" />
+          {(isMobile || !collapsed) && (
+            <span className="font-mono text-[9px] text-zinc-500 truncate">{user.email}</span>
+          )}
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
       <Navbar />
+
+      {/* Mobile menu button */}
+      <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-950">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center">
+            <span className="font-mono text-[9px] font-bold text-zinc-600 dark:text-zinc-400">
+              {org.name.slice(0, 2).toUpperCase()}
+            </span>
+          </div>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white">
+            {org.name}
+          </span>
+        </div>
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="p-2 text-zinc-600 dark:text-zinc-400"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Mobile drawer overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            />
+            <motion.aside
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+              className="fixed left-0 top-0 bottom-0 w-[280px] bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-900 flex flex-col p-4 z-50 md:hidden"
+            >
+              <div className="flex justify-end mb-2">
+                <button onClick={() => setMobileOpen(false)} className="p-1 text-zinc-400">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              {sidebarContent(true)}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-1">
-        {/* Sidebar */}
+        {/* Desktop sidebar */}
         <aside
           className={`${sidebarWidth} bg-zinc-50 dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-900 flex-col fixed left-0 top-16 bottom-0 hidden md:flex p-4 z-20 transition-all duration-300`}
         >
@@ -75,63 +192,7 @@ export default function DashboardShell({ user, org, role, children }: DashboardS
             )}
           </button>
 
-          {/* Org header */}
-          <div className={`px-3 py-5 border-b border-zinc-200 dark:border-zinc-800 mb-4 flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
-            <div className="w-9 h-9 bg-zinc-200 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 flex items-center justify-center overflow-hidden shrink-0">
-              <span className="font-mono text-xs font-bold text-zinc-600 dark:text-zinc-400">
-                {org.name.slice(0, 2).toUpperCase()}
-              </span>
-            </div>
-            {!collapsed && (
-              <div className="text-left overflow-hidden">
-                <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white truncate max-w-[140px]">
-                  {org.name}
-                </p>
-                <p className="font-mono text-[9px] text-zinc-500 uppercase tracking-wider">{role}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Nav */}
-          <nav className="flex-1 flex flex-col gap-0.5">
-            {visibleNav.map(({ id, name, icon: Icon, href }) => {
-              const isActive = pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
-              return (
-                <Link
-                  key={id}
-                  href={href}
-                  title={collapsed ? name : undefined}
-                  className={`flex items-center gap-3 px-4 py-3 transition-all duration-150 ${collapsed ? 'justify-center px-2' : ''} ${
-                    isActive
-                      ? 'bg-[#D4573B] text-white font-bold scale-95 shadow-sm'
-                      : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-150 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white'
-                  }`}
-                >
-                  <Icon className="h-4.5 w-4.5 shrink-0" />
-                  {!collapsed && (
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-widest">{name}</span>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* CTA + user */}
-          <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
-            <Link
-              href="/dashboard/events?new=true"
-              className={`w-full bg-zinc-900 dark:bg-zinc-900 text-white font-mono text-[10px] font-bold py-3.5 px-4 hover:bg-[#D4573B] dark:hover:bg-[#D4573B] transition-colors mb-4 uppercase tracking-wider flex justify-center items-center gap-2 ${collapsed ? 'px-2' : ''}`}
-            >
-              <Plus className="h-4 w-4 shrink-0" />
-              {!collapsed && <span>Create Event</span>}
-            </Link>
-            <div className={`flex items-center gap-3 px-3 py-2 ${collapsed ? 'justify-center px-0' : ''}`}>
-              <UserButton afterSignOutUrl="/" />
-              {!collapsed && (
-                <span className="font-mono text-[9px] text-zinc-500 truncate">{user.email}</span>
-              )}
-            </div>
-          </div>
+          {sidebarContent(false)}
         </aside>
 
         {/* Main content */}

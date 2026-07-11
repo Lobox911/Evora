@@ -5,6 +5,8 @@ import { getEventsByOrg, getTiersForEvent } from '@/db/queries/events';
 import { getTicketsByEvent } from '@/db/queries/tickets';
 import { fmtDate, fmtTime } from '@/lib/utils';
 import DashboardPageClient from './DashboardPageClient';
+import { Suspense } from 'react';
+import DashboardSkeleton from '@/components/DashboardSkeleton';
 
 export const metadata = { title: 'Dashboard' };
 
