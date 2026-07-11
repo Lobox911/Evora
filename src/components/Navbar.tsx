@@ -7,6 +7,7 @@ import { ShoppingBag, DollarSign, Shield, Sun, Moon, Ticket, Menu, X } from 'luc
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 import { AnimatePresence, motion } from 'motion/react';
 
+
 export default function Navbar() {
   const pathname = usePathname();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -25,15 +26,25 @@ export default function Navbar() {
   }, [theme]);
 
   const currentMode =
-    pathname.startsWith('/dashboard') ? 'organizer'
-    : pathname.startsWith('/admin') ? 'organizer'
+    pathname.startsWith('/admin') ? 'admin'
+    : pathname.startsWith('/dashboard') ? 'organizer'
     : pathname === '/pricing' ? 'pricing'
     : 'client';
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/me')
+      .then((r) => r.json())
+      .then((d) => setIsAdmin(d.user?.isPlatformAdmin === true))
+      .catch(() => {});
+  }, []);
 
   const modeLinks = [
     { mode: 'client', href: '/', label: 'Storefront', icon: ShoppingBag },
     { mode: 'pricing', href: '/pricing', label: 'Pricing', icon: DollarSign },
     { mode: 'organizer', href: '/dashboard', label: 'Console', icon: Shield },
+    ...(isAdmin ? [{ mode: 'admin', href: '/admin', label: 'Admin', icon: Shield }] : []),
   ];
 
   return (
