@@ -119,7 +119,7 @@ export default function DashboardShell({ user, org, role, children }: DashboardS
           {/* CTA + user */}
           <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800">
             <Link
-              href="/dashboard/events"
+              href="/dashboard/events?new=true"
               className={`w-full bg-zinc-900 dark:bg-zinc-900 text-white font-mono text-[10px] font-bold py-3.5 px-4 hover:bg-[#D4573B] dark:hover:bg-[#D4573B] transition-colors mb-4 uppercase tracking-wider flex justify-center items-center gap-2 ${collapsed ? 'px-2' : ''}`}
             >
               <Plus className="h-4 w-4 shrink-0" />

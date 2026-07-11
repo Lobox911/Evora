@@ -116,6 +116,7 @@ export const ticketTiers = pgTable(
     sortOrder: integer('sort_order').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    perks: text('perks').array().notNull().default(sql`'{}'`),
   },
   (t) => [index('ix_tiers_event').on(t.eventId)]
 );

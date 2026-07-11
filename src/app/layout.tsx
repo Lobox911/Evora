@@ -43,6 +43,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         lang="en"
         className={`${inter.variable} ${playfairDisplay.variable} ${jetbrainsMono.variable} dark`}
       >
+        <head>
+          <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet" />
+        </head>
         <body className="antialiased">
           <NotificationProvider>
             {children}

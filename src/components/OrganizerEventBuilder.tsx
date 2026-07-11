@@ -201,23 +201,31 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       return;
     }
 
-    const dateFormatted = formatPreviewDate(startDate);
-    const newEvent: Event = {
+    // Default times if user only picked dates without time
+    const finalStartDate = startDate
+      ? startDate
+      : new Date().toISOString().slice(0, 16);
+    const finalEndDate = endDate || undefined;
+
+    const dateFormatted = formatPreviewDate(finalStartDate);
+    const newEvent: any = {
       id: `ev-new-${Math.floor(1000 + Math.random() * 9000)}`,
       title,
       subtitle,
       description,
       date: dateFormatted,
-      time: startDate ? new Date(startDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '19:00',
+      time: finalStartDate ? new Date(finalStartDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '19:00',
       location: `${venueName}, ${address}`,
       image,
       status: 'active',
       tiers,
       tags: tags.split(',').map((t) => t.trim()).filter((t) => t !== ''),
+      rawStartDate: finalStartDate,
+      rawEndDate: finalEndDate,
     };
 
     onAddEvent(newEvent);
-    showToast(`"${title}" published successfully to your listings!`, 'success');
+    showToast(`"${title}" published successfully!`, 'success');
   };
 
   // Preview total computation
@@ -1759,6 +1767,47 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
 
         </section>
 
+      </div>
+
+      {/* Persistent Action Bar — visible on all tabs */}
+      <div className="sticky bottom-0 z-30 border-t border-zinc-200 dark:border-zinc-900 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+              Unsaved Draft
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setTitle('');
+                setSubtitle('');
+                setDescription('');
+                setStartDate('');
+                setEndDate('');
+                setVenueName('');
+                setAddress('');
+                setImage('');
+                setTags('');
+                setTiers([{ id: 'tier-new-1', name: 'General Admission', price: 0, capacity: 100, soldCount: 0, description: '', status: 'available' }]);
+                setActiveTab('basics');
+                showToast('Form cleared for new event.', 'info');
+              }}
+              className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400 px-6 py-2.5 font-mono text-[10px] font-bold uppercase tracking-wider hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
+            >
+              New Event
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSaveEvent()}
+              className="bg-zinc-900 dark:bg-white text-white dark:text-black px-8 py-2.5 font-mono text-[10px] font-bold uppercase tracking-wider hover:bg-[#D4573B] dark:hover:bg-[#D4573B] dark:hover:text-white transition-colors"
+            >
+              Publish Event
+            </button>
+          </div>
+        </div>
       </div>
     </motion.div>
   );
