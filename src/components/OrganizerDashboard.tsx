@@ -33,7 +33,7 @@ export default function OrganizerDashboard({
   // Chart and filtering states
   const [chartMetric, setChartMetric] = useState<'revenue' | 'registrations'>('revenue');
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
-  const [delegateSearch, setDelegateSearch] = useState('');
+  const [attendeeSearch, setattendeeSearch] = useState('');
 
   // Calculations based on actual data state
   const activeEvents = events.filter((e) => e.status === 'active');
@@ -44,7 +44,7 @@ export default function OrganizerDashboard({
   const totalTicketsSold = registeredAttendees.length;
   const totalRevenue = registeredAttendees.reduce((sum, a) => sum + a.ticketPrice, 0);
 
-  // Add initial base revenue from past events to make numbers look realistic and high-fidelity ($42,850.00 as in screenshots!)
+  // Add initial base revenue from past events to make numbers look realistic and high-fidelity (₦6,427,500 as in screenshots!)
   const basePastRevenue = 28600; 
   const currentTotalRevenue = basePastRevenue + totalRevenue;
 
@@ -113,10 +113,10 @@ export default function OrganizerDashboard({
     return "Admissions Progression Stable: Direct traffic is indexing +12.4% over benchmark. VIP tiers demonstrating high initial pricing tolerance.";
   };
 
-  // Filter delegate bookings inline in the table
+  // Filter attendee bookings inline in the table
   const filteredRecentBookings = attendees.filter((at) => {
-    if (!delegateSearch) return true;
-    const query = delegateSearch.toLowerCase();
+    if (!attendeeSearch) return true;
+    const query = attendeeSearch.toLowerCase();
     return (
       at.name.toLowerCase().includes(query) ||
       at.email.toLowerCase().includes(query) ||
@@ -146,7 +146,7 @@ export default function OrganizerDashboard({
           <button
             onClick={() => {
               const csvContent = "data:text/csv;charset=utf-8," 
-                + "Delegate,Email,Access,Epoch,Value\n"
+                + "attendee,Email,Access,Epoch,Value\n"
                 + attendees.map(e => `"${e.name}","${e.email}","${e.ticketClass}","${e.purchaseDate}",${e.ticketPrice}`).join("\n");
               const encodedUri = encodeURI(csvContent);
               const link = document.createElement("a");
@@ -158,7 +158,7 @@ export default function OrganizerDashboard({
             }}
             className="px-6 py-3 border border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-white font-mono text-[11px] font-bold uppercase tracking-wider hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors rounded-none cursor-pointer"
           >
-            Export Ledger
+            Export CSV
           </button>
           
           <button
@@ -179,7 +179,7 @@ export default function OrganizerDashboard({
             <h3 className="font-mono text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Total Revenue</h3>
             <div className="flex items-baseline gap-3">
               <span className="font-serif text-3xl md:text-4xl text-zinc-900 dark:text-white font-medium">
-                ${currentTotalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₦{currentTotalRevenue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
               <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 flex items-center font-bold">
                 <span className="mr-0.5">↑</span> 14%
@@ -362,7 +362,7 @@ export default function OrganizerDashboard({
                     </p>
                     <p className="font-mono text-xs font-bold text-[#D4573B]">
                       {chartMetric === 'revenue' 
-                        ? `$${activeChartData[hoveredPoint].value.toLocaleString(undefined, { minimumFractionDigits: 0 })}`
+                        ? `₦${activeChartData[hoveredPoint].value.toLocaleString()}`
                         : `${activeChartData[hoveredPoint].value} sold`
                       }
                     </p>
@@ -384,7 +384,7 @@ export default function OrganizerDashboard({
                   Recent Sales
                 </h2>
                 <p className="font-mono text-[9px] text-zinc-400 uppercase tracking-widest mt-1">
-                  Chronological admission transactions
+                  Recent ticket purchases
                 </p>
               </div>
               <button 
@@ -400,14 +400,14 @@ export default function OrganizerDashboard({
               <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-zinc-400" />
               <input 
                 type="text"
-                placeholder="Search delegate list..."
-                value={delegateSearch}
-                onChange={(e) => setDelegateSearch(e.target.value)}
+                placeholder="Search attendees..."
+                value={attendeeSearch}
+                onChange={(e) => setattendeeSearch(e.target.value)}
                 className="w-full bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-zinc-800 pl-9 pr-8 py-2 text-xs font-light focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-700 text-zinc-900 dark:text-white rounded-none"
               />
-              {delegateSearch && (
+              {attendeeSearch && (
                 <button 
-                  onClick={() => setDelegateSearch('')}
+                  onClick={() => setattendeeSearch('')}
                   className="absolute right-3 top-2.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 border-0 bg-transparent"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -439,7 +439,7 @@ export default function OrganizerDashboard({
                       </div>
                       <div className="text-right">
                         <p className="font-mono text-[11px] font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
-                          ${at.ticketPrice.toFixed(2)}
+                          ₦{at.ticketPrice.toLocaleString()}
                         </p>
                         <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono mt-0.5">
                           {at.purchaseDate}
@@ -450,7 +450,7 @@ export default function OrganizerDashboard({
                 })
               ) : (
                 <div className="py-8 text-center text-xs text-zinc-400 font-mono uppercase">
-                  No matching transactions found.
+                  No recent sales yet.
                 </div>
               )}
             </div>
