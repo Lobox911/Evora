@@ -41,13 +41,13 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
   const [activeBuilderTab, setActiveBuilderTab] = useState<'editor' | 'preview'>('editor');
   
   // Basics Form State
-  const [title, setTitle] = useState('Modernist Vernissage 2026');
-  const [subtitle, setSubtitle] = useState('A curated retrospective highlighting stark forms, Brutalist architecture, and negative space.');
-  const [description, setDescription] = useState('A curated retrospective highlighting stark forms, Brutalist architecture, and negative space. Fully integrated with active ledger systems.');
-  const [startDate, setStartDate] = useState('2026-10-24T19:00');
-  const [endDate, setEndDate] = useState('2026-10-25T02:00');
-  const [venueName, setVenueName] = useState('The Concrete Gallery');
-  const [address, setAddress] = useState('1248 Design District, Stockholm');
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [venueName, setVenueName] = useState('');
+  const [address, setAddress] = useState('');
   const [image, setImage] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuBHhZ8eM_Ieby0cE59Joo6iA-d4v8jU4DZKMk9Y8qX7NRF9YYej5Ka-8M18lASMmr1WI1X3NpkZsnHrt29XQm02b3PU4v0j6U-seTCqBF1dykjxLM9K-U8jEeO4ldfaqY4JYangMOqRXyg27DlghFKpP0mEJdy_KUoCD1SisPnvqWRVFybQlIV3hQX4M-WidRwxd42mrmFG8OGJL1yGmq7Ofa7mAeDElTzwRXjerqrrGTnKWGILaHPu4hnQM6nUeyEMMuFOs3PGBS8');
   const [tags, setTags] = useState('Exhibition, Brutalist, Stockholm');
 
@@ -272,19 +272,25 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
   // Auto fill high-end description stories
   const handleApplyTemplate = (type: 'exhibition' | 'salon' | 'performance') => {
     if (type === 'exhibition') {
-      setDescription('A sharp, physical investigation into the intersections of modular concrete walls, severe geometry, and natural twilight illumination.');
-      setTags('Exhibition, Brutalist, Stockholm');
-      setImage('https://lh3.googleusercontent.com/aida-public/AB6AXuBHhZ8eM_Ieby0cE59Joo6iA-d4v8jU4DZKMk9Y8qX7NRF9YYej5Ka-8M18lASMmr1WI1X3NpkZsnHrt29XQm02b3PU4v0j6U-seTCqBF1dykjxLM9K-U8jEeO4ldfaqY4JYangMOqRXyg27DlghFKpP0mEJdy_KUoCD1SisPnvqWRVFybQlIV3hQX4M-WidRwxd42mrmFG8OGJL1yGmq7Ofa7mAeDElTzwRXjerqrrGTnKWGILaHPu4hnQM6nUeyEMMuFOs3PGBS8');
+      setTitle('Afrobeats Night Live');
+      setDescription('A high-energy night of Afrobeats, Amapiano, and live DJ sets. Food vendors, drinks, and good vibes only.');
+      setTags('Afrobeats, Nightlife, Lagos');
+      setVenueName('Eko Atlantic City');
+      setAddress('Victoria Island, Lagos');
     } else if (type === 'salon') {
-      setDescription('An intimate chamber gathering presenting progressive dialogues on contemporary Nordic spatial curation, soundscapes, and raw basalt textures.');
-      setTags('Chamber, Discussion, Architecture');
-      setImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAV1PV6_opJO6pbY2HdAOLF-KqAgzXFv9qnApnC3FeTVLR77mtvtRwConHjqCy6ZLInUEH2PRBPTS0l5ODXQYEYhr6C6lxC2UfaiXpHSQfuAZ80juYzl9XwQD6tDhDh00Kf65aA8RFZcMAPZlMYdV8S1eegZhmFnebPa-P9nh0NLfMfhNDovqbe8lgd86uFBVBZcjRAXlLpUgAASAeLSEIFe0ugsN8bsPH9Ql4gL1n4ttcLqcw06HT6Iy8C2tvp8usJoATMWZC1qjA');
+      setTitle('Lagos Tech Meetup');
+      setDescription('Intimate networking session for founders, developers, and creatives building the future of African tech.');
+      setTags('Tech, Networking, Startups');
+      setVenueName('Zone Tech Park');
+      setAddress('Gbagada Expressway, Lagos');
     } else if (type === 'performance') {
-      setDescription('A dynamic audiotactile spatial ritual featuring classical acoustic cello strings paired with quadraphonic low-frequency synthesized pulses.');
-      setTags('Ritual, Sound, Classical');
-      setImage('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800');
+      setTitle('Sunday Jollof & Jazz');
+      setDescription('Live jazz performances, premium jollof rice tasting from top chefs, and craft cocktails in a garden setting.');
+      setTags('Jazz, Food, Brunch');
+      setVenueName('Nok by Alara');
+      setAddress('12A Akin Olugbade, Victoria Island, Lagos');
     }
-    showToast('Applied premium content template', 'success');
+    showToast('Applied event template', 'success');
   };
 
   return (
@@ -594,21 +600,21 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                             onClick={() => handleApplyTemplate('exhibition')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Exhibition Vernissage
+                            Afrobeats Night
                           </button>
                           <button
                             type="button"
                             onClick={() => handleApplyTemplate('salon')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Nordic Salon
+                            Tech Meetup
                           </button>
                           <button
                             type="button"
                             onClick={() => handleApplyTemplate('performance')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Chamber Ritual
+                            Jollof & Jazz
                           </button>
                         </div>
                       </div>
