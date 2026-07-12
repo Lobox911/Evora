@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
 import { 
   Check, 
-  Circle, 
   LayoutGrid, 
   TrendingUp, 
   Cpu, 
   Infinity as InfinityIcon, 
   ArrowUpRight, 
-  Mail, 
-  Globe, 
-  Layers,
-  Sparkles
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useNotification } from './NotificationProvider';
@@ -24,7 +19,7 @@ export default function PricingPage({ onSelectTier }: PricingPageProps) {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   const handleSelectTier = (tierName: string) => {
-    showToast(`Initiating onboarding ledger for ${tierName} Tier.`, "success");
+    showToast(`Starting setup for the ${tierName} plan. We'll reach out shortly!`, "success");
     if (onSelectTier) {
       onSelectTier(tierName);
     }
@@ -35,271 +30,278 @@ export default function PricingPage({ onSelectTier }: PricingPageProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="bg-[#FAFAF8] dark:bg-black text-[#1A1A1A] dark:text-zinc-100 min-h-screen pt-12 pb-24 transition-colors duration-300 font-sans"
+      className="bg-[#FAFAF8] dark:bg-black text-[#1A1A1A] dark:text-zinc-100 min-h-screen pt-10 sm:pt-12 pb-20 sm:pb-24 transition-colors duration-300 font-sans"
     >
       {/* Hero Section */}
-      <header className="px-6 md:px-8 max-w-7xl mx-auto mb-20 md:mb-28 text-left">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end border-b border-[#dfbfb9]/60 dark:border-zinc-900 pb-12">
+      <header className="px-4 sm:px-6 md:px-8 max-w-7xl mx-auto mb-14 sm:mb-20 md:mb-28 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-end border-b border-zinc-200 dark:border-zinc-900 pb-10 sm:pb-12">
           <div className="md:col-span-8 space-y-4">
             <span className="font-mono text-[11px] font-bold text-[#D4573B] uppercase tracking-[0.15em] block">
-              Subscription Economics
+              Simple Pricing
             </span>
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-light italic text-[#1A1A1A] dark:text-white leading-[0.95] tracking-tighter">
-              Scalable tools for the<br />new cultural economy.
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-[#1A1A1A] dark:text-white leading-tight tracking-tight">
+              Sell tickets. Grow your events.<br className="hidden sm:block" /> No hidden charges.
             </h1>
           </div>
           <div className="md:col-span-4 pb-1">
-            <p className="text-sm md:text-base text-zinc-650 dark:text-zinc-400 leading-relaxed font-light font-sans">
-              Precision-engineered for the curated experience. Simple pricing models for complex organizational needs. No hidden percentages, pure absolute transparency.
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
+              Whether you're organizing an owambe, a tech meetup, or a Detty December concert — pick the plan that fits. Upgrade anytime as your events grow.
             </p>
           </div>
         </div>
       </header>
 
       {/* Pricing Grid */}
-      <section className="px-6 md:px-8 max-w-7xl mx-auto mb-32">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="px-4 sm:px-6 md:px-8 max-w-7xl mx-auto mb-20 sm:mb-32">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           
-          {/* Emerging Tier (01 / Entry) */}
+          {/* Starter Plan */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             onMouseEnter={() => setHoveredCard(1)}
             onMouseLeave={() => setHoveredCard(null)}
-            className="group flex flex-col justify-between h-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-8 sm:p-10 lg:p-12 transition-all duration-300 rounded-none relative text-left"
+            className="group flex flex-col justify-between h-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-6 sm:p-8 lg:p-10 transition-all duration-300 text-left"
             style={{
               transform: hoveredCard === 1 ? 'translateY(-8px)' : 'translateY(0px)',
               borderColor: hoveredCard === 1 ? 'rgba(212, 87, 59, 0.4)' : ''
             }}
           >
             <div>
-              <span className="font-mono text-[10px] font-bold text-zinc-450 dark:text-zinc-550 uppercase tracking-widest mb-10 block">
-                01 / Entry
+              <span className="font-mono text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-8 block">
+                Starter
               </span>
-              <h2 className="font-serif text-3xl md:text-4xl italic mb-4 font-light text-[#1A1A1A] dark:text-white">
-                The Emerging
+              <h2 className="font-serif text-2xl sm:text-3xl font-medium mb-3 text-[#1A1A1A] dark:text-white">
+                Free Forever
               </h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm mb-12 font-light leading-relaxed">
-                Essential infrastructure for independent curators and boutique pop-ups.
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-8 font-normal leading-relaxed">
+                Perfect for small events, birthday parties, and first-time organizers.
               </p>
               
-              <div className="mb-12 flex items-baseline">
-                <span className="font-serif text-5xl italic font-light text-[#1A1A1A] dark:text-white">$0</span>
-                <span className="font-sans text-[10px] text-zinc-500 dark:text-zinc-400 ml-2.5 uppercase tracking-widest font-bold">
+              <div className="mb-8 flex items-baseline">
+                <span className="font-serif text-4xl sm:text-5xl font-medium text-[#1A1A1A] dark:text-white">₦0</span>
+                <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 ml-2.5 uppercase tracking-widest font-bold">
                   per month
                 </span>
               </div>
 
-              <ul className="space-y-6 mb-16">
-                <li className="flex items-center gap-4 text-xs sm:text-sm font-light">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B]" />
-                  <span>Unlimited Basic Listings</span>
+              <ul className="space-y-4 mb-12">
+                <li className="flex items-center gap-3 text-sm font-normal">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B] shrink-0" />
+                  <span>Up to 3 events per month</span>
                 </li>
-                <li className="flex items-center gap-4 text-xs sm:text-sm font-light">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B]" />
-                  <span>Mobile Check-in Access</span>
+                <li className="flex items-center gap-3 text-sm font-normal">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B] shrink-0" />
+                  <span>QR code check-in</span>
                 </li>
-                <li className="flex items-center gap-4 text-xs sm:text-sm font-light">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B]" />
-                  <span>Standard Performance Data</span>
+                <li className="flex items-center gap-3 text-sm font-normal">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B] shrink-0" />
+                  <span>Basic sales dashboard</span>
+                </li>
+                <li className="flex items-center gap-3 text-sm font-normal">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B] shrink-0" />
+                  <span>Email ticket delivery</span>
                 </li>
               </ul>
             </div>
 
             <button
-              onClick={() => handleSelectTier('Emerging')}
-              className="w-full border border-zinc-900 dark:border-zinc-300 dark:hover:border-white hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black py-4.5 font-sans text-[11px] font-bold uppercase tracking-widest transition-all duration-200 min-h-[44px]"
+              onClick={() => handleSelectTier('Starter')}
+              className="w-full border border-zinc-900 dark:border-zinc-300 dark:hover:border-white hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black py-4 font-mono text-[11px] font-bold uppercase tracking-widest transition-all duration-200"
             >
-              Select Tier
+              Get Started Free
             </button>
           </motion.div>
 
-          {/* Professional Tier (02 / Professional) - Highlighted */}
+          {/* Pro Plan — Highlighted */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             onMouseEnter={() => setHoveredCard(2)}
             onMouseLeave={() => setHoveredCard(null)}
-            className="group flex flex-col justify-between h-full bg-[#1A1A1A] dark:bg-zinc-900 text-white p-8 sm:p-10 lg:p-12 transition-all duration-300 rounded-none relative text-left overflow-hidden shadow-xl"
+            className="group flex flex-col justify-between h-full bg-[#1A1A1A] dark:bg-zinc-900 text-white p-6 sm:p-8 lg:p-10 transition-all duration-300 relative text-left overflow-hidden shadow-xl"
             style={{
               transform: hoveredCard === 2 ? 'translateY(-8px)' : 'translateY(0px)',
-              borderColor: hoveredCard === 2 ? 'rgba(212, 87, 59, 0.6)' : ''
             }}
           >
-            {/* Preferred sticker */}
+            {/* Popular badge */}
             <div className="absolute top-0 right-0">
-              <div className="bg-[#D4573B] text-white text-[9px] font-bold uppercase tracking-widest px-4 py-1.5 font-sans">
-                Preferred
+              <div className="bg-[#D4573B] text-white text-[9px] font-bold uppercase tracking-widest px-4 py-1.5 font-mono">
+                Most Popular
               </div>
             </div>
 
             <div>
-              <span className="font-mono text-[10px] font-bold text-[#D4573B] uppercase tracking-widest mb-10 block">
-                02 / Professional
+              <span className="font-mono text-[10px] font-bold text-[#D4573B] uppercase tracking-widest mb-8 block">
+                Pro
               </span>
-              <h2 className="font-serif text-3xl md:text-4xl italic mb-4 font-light text-white">
-                The Professional
+              <h2 className="font-serif text-2xl sm:text-3xl font-medium mb-3 text-white">
+                For Serious Organizers
               </h2>
-              <p className="text-zinc-400 text-xs sm:text-sm mb-12 font-light leading-relaxed">
-                High-performance tools for institutions and production venues.
+              <p className="text-zinc-400 text-sm mb-8 font-normal leading-relaxed">
+                For event planners, venues, and businesses running regular ticketed events.
               </p>
               
-              <div className="mb-12 flex items-baseline">
-                <span className="font-serif text-5xl italic font-light text-[#D4573B]">$149</span>
-                <span className="font-sans text-[10px] text-zinc-400 ml-2.5 uppercase tracking-widest font-bold">
-                  per month / billed annually
+              <div className="mb-8 flex items-baseline">
+                <span className="font-serif text-4xl sm:text-5xl font-medium text-[#D4573B]">₦15,000</span>
+                <span className="font-mono text-[10px] text-zinc-400 ml-2.5 uppercase tracking-widest font-bold">
+                  per month
                 </span>
               </div>
 
-              <ul className="space-y-6 mb-16">
-                <li className="flex items-start gap-4 text-xs sm:text-sm font-light">
+              <ul className="space-y-4 mb-12">
+                <li className="flex items-start gap-3 text-sm font-normal">
                   <LayoutGrid className="h-5 w-5 text-[#D4573B] shrink-0 mt-0.5" />
-                  <div className="space-y-0.5 text-left">
-                    <span className="block font-bold uppercase text-[10px] tracking-wider text-white">CAD Seating Maps</span>
-                    <span className="text-zinc-400 text-xs font-light">Precise spatial ticket allocation.</span>
+                  <div className="text-left">
+                    <span className="block font-bold text-[11px] uppercase tracking-wider text-white">Unlimited Events</span>
+                    <span className="text-zinc-400 text-xs">No cap on how many events you run.</span>
                   </div>
                 </li>
-                <li className="flex items-start gap-4 text-xs sm:text-sm font-light">
+                <li className="flex items-start gap-3 text-sm font-normal">
                   <TrendingUp className="h-5 w-5 text-[#D4573B] shrink-0 mt-0.5" />
-                  <div className="space-y-0.5 text-left">
-                    <span className="block font-bold uppercase text-[10px] tracking-wider text-white">Behavioral CRM</span>
-                    <span className="text-zinc-400 text-xs font-light">Deep audience lifecycle insights.</span>
+                  <div className="text-left">
+                    <span className="block font-bold text-[11px] uppercase tracking-wider text-white">Advanced Analytics</span>
+                    <span className="text-zinc-400 text-xs">Track sales, attendance, and revenue trends.</span>
                   </div>
                 </li>
-                <li className="flex items-start gap-4 text-xs sm:text-sm font-light">
+                <li className="flex items-start gap-3 text-sm font-normal">
                   <Cpu className="h-5 w-5 text-[#D4573B] shrink-0 mt-0.5" />
-                  <div className="space-y-0.5 text-left">
-                    <span className="block font-bold uppercase text-[10px] tracking-wider text-white">Full API Bridge</span>
-                    <span className="text-zinc-400 text-xs font-light">Seamless backend integration.</span>
+                  <div className="text-left">
+                    <span className="block font-bold text-[11px] uppercase tracking-wider text-white">Custom Branding</span>
+                    <span className="text-zinc-400 text-xs">Your logo, colors, and domain on event pages.</span>
                   </div>
                 </li>
               </ul>
             </div>
 
             <button
-              onClick={() => handleSelectTier('Professional')}
-              className="w-full bg-[#D4573B] hover:bg-[#c34c31] text-white py-4.5 font-sans text-[11px] font-bold uppercase tracking-widest transition-all duration-200 min-h-[44px]"
+              onClick={() => handleSelectTier('Pro')}
+              className="w-full bg-[#D4573B] hover:bg-[#c34c31] text-white py-4 font-mono text-[11px] font-bold uppercase tracking-widest transition-all duration-200"
             >
-              Elevate Platform
+              Start Pro Plan
             </button>
           </motion.div>
 
-          {/* Boutique Tier (03 / Growth) */}
+          {/* Business Plan */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
             onMouseEnter={() => setHoveredCard(3)}
             onMouseLeave={() => setHoveredCard(null)}
-            className="group flex flex-col justify-between h-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-8 sm:p-10 lg:p-12 transition-all duration-300 rounded-none relative text-left"
+            className="group flex flex-col justify-between h-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-6 sm:p-8 lg:p-10 transition-all duration-300 text-left"
             style={{
               transform: hoveredCard === 3 ? 'translateY(-8px)' : 'translateY(0px)',
               borderColor: hoveredCard === 3 ? 'rgba(212, 87, 59, 0.4)' : ''
             }}
           >
             <div>
-              <span className="font-mono text-[10px] font-bold text-zinc-450 dark:text-zinc-550 uppercase tracking-widest mb-10 block">
-                03 / Growth
+              <span className="font-mono text-[10px] font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-8 block">
+                Business
               </span>
-              <h2 className="font-serif text-3xl md:text-4xl italic mb-4 font-light text-[#1A1A1A] dark:text-white">
-                The Boutique
+              <h2 className="font-serif text-2xl sm:text-3xl font-medium mb-3 text-[#1A1A1A] dark:text-white">
+                Scale Without Limits
               </h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-xs sm:text-sm mb-12 font-light leading-relaxed">
-                Optimized for high-velocity sales and rapid cycle events.
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-8 font-normal leading-relaxed">
+                For festivals, concert promoters, and high-volume event businesses.
               </p>
               
-              <div className="mb-12 flex items-baseline">
-                <span className="font-serif text-5xl italic font-light text-[#1A1A1A] dark:text-white">$49</span>
-                <span className="font-sans text-[10px] text-zinc-500 dark:text-zinc-400 ml-2.5 uppercase tracking-widest font-bold">
+              <div className="mb-8 flex items-baseline">
+                <span className="font-serif text-4xl sm:text-5xl font-medium text-[#1A1A1A] dark:text-white">₦50,000</span>
+                <span className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400 ml-2.5 uppercase tracking-widest font-bold">
                   per month
                 </span>
               </div>
 
-              <ul className="space-y-6 mb-16">
-                <li className="flex items-center gap-4 text-xs sm:text-sm font-light">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B]" />
-                  <span>Lower Transaction Surcharge</span>
+              <ul className="space-y-4 mb-12">
+                <li className="flex items-center gap-3 text-sm font-normal">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B] shrink-0" />
+                  <span>Lower transaction fees (1.5%)</span>
                 </li>
-                <li className="flex items-center gap-4 text-xs sm:text-sm font-light">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B]" />
-                  <span>Custom Ticket Visual Identity</span>
+                <li className="flex items-center gap-3 text-sm font-normal">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B] shrink-0" />
+                  <span>Team accounts (up to 10 staff)</span>
                 </li>
-                <li className="flex items-center gap-4 text-xs sm:text-sm font-light">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B]" />
-                  <span>Priority Concierge Support</span>
+                <li className="flex items-center gap-3 text-sm font-normal">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B] shrink-0" />
+                  <span>Priority support (WhatsApp + Email)</span>
+                </li>
+                <li className="flex items-center gap-3 text-sm font-normal">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#D4573B] shrink-0" />
+                  <span>Dedicated account manager</span>
                 </li>
               </ul>
             </div>
 
             <button
-              onClick={() => handleSelectTier('Boutique')}
-              className="w-full border border-zinc-900 dark:border-zinc-300 dark:hover:border-white hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black py-4.5 font-sans text-[11px] font-bold uppercase tracking-widest transition-all duration-200 min-h-[44px]"
+              onClick={() => handleSelectTier('Business')}
+              className="w-full border border-zinc-900 dark:border-zinc-300 dark:hover:border-white hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-black py-4 font-mono text-[11px] font-bold uppercase tracking-widest transition-all duration-200"
             >
-              Select Tier
+              Contact Sales
             </button>
           </motion.div>
 
         </div>
       </section>
 
-      {/* Comparative Data Table */}
-      <section className="bg-zinc-100 dark:bg-zinc-900/45 py-24 px-6 md:px-8 border-y border-zinc-200 dark:border-zinc-900">
+      {/* Fee Comparison Table */}
+      <section className="bg-zinc-100 dark:bg-zinc-900/45 py-16 sm:py-24 px-4 sm:px-6 md:px-8 border-y border-zinc-200 dark:border-zinc-900">
         <div className="max-w-7xl mx-auto">
           
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16 items-end text-left">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 mb-12 sm:mb-16 items-end text-left">
             <div className="md:col-span-6 space-y-3">
-              <span className="font-mono text-[10px] font-bold text-[#D4573B] uppercase tracking-widest block">
-                Comparative Analysis
+              <span className="font-mono text-[11px] font-bold text-[#D4573B] uppercase tracking-widest block">
+                Fee Breakdown
               </span>
-              <h3 className="font-serif text-4xl italic font-light text-[#1A1A1A] dark:text-white tracking-tight">
-                Platform Transparency
+              <h3 className="font-serif text-3xl sm:text-4xl font-medium text-[#1A1A1A] dark:text-white tracking-tight">
+                What You Pay, Clearly
               </h3>
             </div>
             <div className="md:col-span-6">
-              <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-md font-light leading-relaxed">
-                Our fee structure is immutable and radical in its transparency. We align our growth directly with yours, eliminating tiered gates.
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-md font-normal leading-relaxed">
+                No surprises. Every kobo is accounted for. You see exactly what goes to processing and what comes to us — and you keep the rest.
               </p>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-[700px] text-left">
+          <div className="overflow-x-auto -mx-4 px-4">
+            <table className="w-full border-collapse min-w-[600px] text-left">
               <thead>
-                <tr className="border-b border-zinc-900 dark:border-zinc-100 font-sans text-[11px] font-bold uppercase tracking-widest text-zinc-550 dark:text-zinc-350">
-                  <th className="py-6 font-bold uppercase">Service Metric</th>
-                  <th className="py-6 font-bold uppercase">Emerging</th>
-                  <th className="py-6 font-bold uppercase text-[#D4573B]">Professional</th>
-                  <th className="py-6 font-bold uppercase">Boutique</th>
+                <tr className="border-b border-zinc-900 dark:border-zinc-100 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+                  <th className="py-5 font-bold">Fee Type</th>
+                  <th className="py-5 font-bold">Starter</th>
+                  <th className="py-5 font-bold text-[#D4573B]">Pro</th>
+                  <th className="py-5 font-bold">Business</th>
                 </tr>
               </thead>
-              <tbody className="text-xs sm:text-sm font-light">
-                <tr className="border-b border-zinc-200 dark:border-zinc-800/65 group hover:bg-white/40 dark:hover:bg-black/30 transition-colors">
-                  <td className="py-8 font-sans text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
-                    Evora Service Fee
+              <tbody className="text-sm font-normal">
+                <tr className="border-b border-zinc-200 dark:border-zinc-800/65 hover:bg-white/40 dark:hover:bg-black/30 transition-colors">
+                  <td className="py-6 font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
+                    Evora Fee
                   </td>
-                  <td className="py-8 text-zinc-700 dark:text-zinc-300">3.5% + $0.99</td>
-                  <td className="py-8 text-zinc-900 dark:text-white font-bold">2.0% + $0.75</td>
-                  <td className="py-8 text-zinc-700 dark:text-zinc-300">2.5% + $0.50</td>
+                  <td className="py-6 text-zinc-700 dark:text-zinc-300">5% per ticket</td>
+                  <td className="py-6 text-zinc-900 dark:text-white font-bold">3% per ticket</td>
+                  <td className="py-6 text-zinc-700 dark:text-zinc-300">1.5% per ticket</td>
                 </tr>
-                <tr className="border-b border-zinc-200 dark:border-zinc-800/65 group hover:bg-white/40 dark:hover:bg-black/30 transition-colors">
-                  <td className="py-8 font-sans text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
+                <tr className="border-b border-zinc-200 dark:border-zinc-800/65 hover:bg-white/40 dark:hover:bg-black/30 transition-colors">
+                  <td className="py-6 font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
                     Payment Processing
                   </td>
-                  <td className="py-8 text-zinc-700 dark:text-zinc-300">2.9% + $0.30</td>
-                  <td className="py-8 text-zinc-900 dark:text-white font-bold">2.9% + $0.30</td>
-                  <td className="py-8 text-zinc-700 dark:text-zinc-300">2.9% + $0.30</td>
+                  <td className="py-6 text-zinc-700 dark:text-zinc-300">1.5% + ₦100</td>
+                  <td className="py-6 text-zinc-900 dark:text-white font-bold">1.5% + ₦100</td>
+                  <td className="py-6 text-zinc-700 dark:text-zinc-300">1.5% + ₦100</td>
                 </tr>
-                <tr className="group hover:bg-white/40 dark:hover:bg-black/30 transition-colors">
-                  <td className="py-8 font-sans text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
-                    Payout Window
+                <tr className="hover:bg-white/40 dark:hover:bg-black/30 transition-colors">
+                  <td className="py-6 font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-bold">
+                    Payout Speed
                   </td>
-                  <td className="py-8 text-zinc-555 dark:text-zinc-400">3–5 Business Days</td>
-                  <td className="py-8 text-[#D4573B] font-bold italic font-serif text-lg tracking-tight">
-                    Instantaneous
+                  <td className="py-6 text-zinc-500 dark:text-zinc-400">3–5 Business Days</td>
+                  <td className="py-6 text-[#D4573B] font-bold font-serif text-lg tracking-tight">
+                    Next Day
                   </td>
-                  <td className="py-8 text-zinc-700 dark:text-zinc-300">Next Day</td>
+                  <td className="py-6 text-zinc-700 dark:text-zinc-300">Same Day</td>
                 </tr>
               </tbody>
             </table>
@@ -308,25 +310,25 @@ export default function PricingPage({ onSelectTier }: PricingPageProps) {
         </div>
       </section>
 
-      {/* Enterprise Architecture Section */}
-      <section className="py-28 px-6 md:px-8 text-center max-w-4xl mx-auto">
-        <div className="mb-10 inline-flex p-8 border border-zinc-200 dark:border-zinc-800 rotate-45 hover:rotate-0 transition-transform duration-700 cursor-pointer text-[#D4573B]">
-          <InfinityIcon className="h-10 w-10 -rotate-45 hover:rotate-0 transition-transform shrink-0" />
+      {/* Enterprise / Custom Section */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 md:px-8 text-center max-w-4xl mx-auto">
+        <div className="mb-8 inline-flex p-6 sm:p-8 border border-zinc-200 dark:border-zinc-800 text-[#D4573B]">
+          <InfinityIcon className="h-8 w-8 sm:h-10 sm:w-10 shrink-0" />
         </div>
         
-        <h4 className="font-serif text-4xl italic font-light mb-8 text-[#1A1A1A] dark:text-white">
-          Beyond the Standard
+        <h4 className="font-serif text-3xl sm:text-4xl font-medium mb-6 text-[#1A1A1A] dark:text-white">
+          Need Something Custom?
         </h4>
         
-        <p className="text-base sm:text-lg font-light text-zinc-600 dark:text-zinc-400 mb-12 leading-relaxed max-w-2xl mx-auto">
-          For global festivals and heritage venues requiring custom architectural solutions. Our enterprise team builds bespoke infrastructure for scale that exceeds our standard tiers.
+        <p className="text-sm sm:text-base font-normal text-zinc-600 dark:text-zinc-400 mb-10 leading-relaxed max-w-2xl mx-auto">
+          Running a major festival like Flytime Fest, a corporate conference, or a multi-city concert tour? We'll build a custom solution with dedicated support, white-label branding, and volume pricing.
         </p>
 
         <button 
-          onClick={() => showToast("Architectural consult request dispatched. We will contact you shortly.", "success")}
-          className="inline-flex items-center gap-3 font-sans text-[11px] font-bold uppercase tracking-[0.15em] text-[#1A1A1A] dark:text-white border-b border-zinc-300 dark:border-zinc-700 hover:border-[#D4573B] dark:hover:border-[#D4573B] pb-2 transition-all duration-300 min-h-[44px]"
+          onClick={() => showToast("Request received! Our team will contact you within 24 hours.", "success")}
+          className="inline-flex items-center gap-3 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-[#1A1A1A] dark:text-white border-b-2 border-zinc-300 dark:border-zinc-700 hover:border-[#D4573B] dark:hover:border-[#D4573B] pb-2 transition-all duration-300"
         >
-          <span>Request Architectural Consult</span>
+          <span>Talk to Our Team</span>
           <ArrowUpRight className="h-4 w-4 text-[#D4573B]" />
         </button>
       </section>
