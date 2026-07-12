@@ -389,7 +389,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
 
                         <div className="text-right shrink-0">
                           <p className={`font-mono text-sm font-bold ${isSoldOut ? 'line-through text-zinc-400 dark:text-zinc-500' : 'text-zinc-900 dark:text-white'}`}>
-                            ${tier.price}
+                            ₦{tier.price.toLocaleString()}
                           </p>
                           {!isSoldOut && (
                             <p className="text-[10px] font-mono text-zinc-500 uppercase mt-0.5 font-bold">
@@ -441,15 +441,15 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                 <div className="border border-dashed border-zinc-300 dark:border-zinc-800 p-4 space-y-3 bg-zinc-50/50 dark:bg-black/40">
                   <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400 font-medium">
                     <span>Tickets ({totalTickets})</span>
-                    <span className="font-mono text-zinc-900 dark:text-white font-bold">${subtotal.toFixed(2)}</span>
+                    <span className="font-mono text-zinc-900 dark:text-white font-bold">₦{subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400 font-medium">
                     <span>Service Fee</span>
-                    <span className="font-mono text-zinc-900 dark:text-white font-bold">${serviceFee.toFixed(2)}</span>
+                    <span className="font-mono text-zinc-900 dark:text-white font-bold">₦{serviceFee.toLocaleString()}</span>
                   </div>
                   <div className="border-t border-zinc-200 dark:border-zinc-900 pt-3 flex justify-between text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
                     <span>Total</span>
-                    <span className="font-mono text-base font-bold text-zinc-900 dark:text-white">${orderTotal.toFixed(2)}</span>
+                    <span className="font-mono text-base font-bold text-zinc-900 dark:text-white">₦{orderTotal.toLocaleString()}</span>
                   </div>
 
                   {!isCheckoutOpen ? (
@@ -538,7 +538,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                         ) : (
                           <Sparkles className="h-4 w-4" />
                         )}
-                        <span>{isSubmitting ? 'Processing Payment...' : `Pay $${orderTotal.toFixed(2)}`}</span>
+                        <span>{isSubmitting ? 'Processing Payment...' : `Pay ₦${orderTotal.toLocaleString()}`}</span>
                       </button>
                     </form>
                   )}

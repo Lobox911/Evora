@@ -804,9 +804,9 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         {/* Split row for Price and Capacity */}
                         <div className="flex gap-6">
                           <div className="flex-1 relative">
-                            <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Price (USD)</label>
+                            <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Price (₦)</label>
                             <div className="relative flex items-center">
-                              <span className="absolute left-0 font-mono text-zinc-400 text-sm">$</span>
+                              <span className="absolute left-0 font-mono text-zinc-400 text-sm">₦</span>
                               <input
                                   className="w-full border-b border-zinc-150 dark:border-zinc-850 border-x-0 border-t-0 bg-transparent pl-4 pr-0 py-2.5 text-base font-mono text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
                                   type="number"
@@ -1648,7 +1648,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     <div className="bg-black/85 backdrop-blur-md border border-white/10 p-4 mt-2 flex justify-between items-center">
                       <div>
                         <span className="font-mono text-[7px] text-zinc-400 uppercase tracking-widest block">Admission</span>
-                        <span className="font-serif text-base text-white">${previewTotal > 0 ? previewTotal.toFixed(2) : (tiers[0]?.price || 45).toFixed(2)}</span>
+                        <span className="font-serif text-base text-white">₦{previewTotal > 0 ? previewTotal.toLocaleString() : (tiers[0]?.price || 45).toLocaleString()}</span>
                       </div>
                       <button
                         type="button"
@@ -1753,7 +1753,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     <div>
                       <span className="font-mono text-[7px] text-zinc-400 uppercase tracking-widest block">Entry Price</span>
                       <span className="font-mono text-xs font-bold text-zinc-950">
-                        ${(tiers[0]?.price || 45).toFixed(2)} USD
+                        ₦{(tiers[0]?.price || 45).toLocaleString()}
                       </span>
                     </div>
 

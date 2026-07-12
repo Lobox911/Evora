@@ -1,10 +1,10 @@
 import crypto from 'crypto';
 
 // ---- Money ----
-export function formatCents(cents: number, currency = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
+export function formatCents(cents: number, currency = 'NGN'): string {
+  return '₦' + new Intl.NumberFormat('en-NG', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(cents / 100);
 }
 

@@ -670,7 +670,7 @@ export default function OrganizerAttendeeManager({
                         >
                           {availableTiers.map((t) => (
                             <option key={t.name} value={t.name} className="bg-[#faf9f6] dark:bg-zinc-950 text-[#0d0d0d] dark:text-white">
-                              {t.name} — ${t.price} (capacity: {t.capacity - t.soldCount} available)
+                              {t.name} — ₦{t.price.toLocaleString()} (capacity: {t.capacity - t.soldCount} available)
                             </option>
                           ))}
                         </select>
@@ -683,7 +683,7 @@ export default function OrganizerAttendeeManager({
                   <div className="bg-[#efeeeb] dark:bg-zinc-900 border border-[#dfbfb9]/60 dark:border-zinc-800 p-4 font-mono text-[11px] text-[#5f5e5e] dark:text-zinc-400 space-y-1">
                     <p className="font-bold text-[#0d0d0d] dark:text-zinc-200">ACQUISITION SUMMARY:</p>
                     <p>REGISTERING PASS: {selectedTierName || 'General Admission'}</p>
-                    <p>FACE VALUE COMPLIANCE: ${availableTiers.find(t => t.name === selectedTierName)?.price || 0}.00 USD</p>
+                    <p>FACE VALUE: ₦{(availableTiers.find(t => t.name === selectedTierName)?.price || 0).toLocaleString()}</p>
                   </div>
 
                   {/* Form actions */}

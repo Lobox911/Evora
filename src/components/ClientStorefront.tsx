@@ -458,7 +458,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
                             {isSoldOut ? (
                               <span className="text-zinc-400 line-through">Sold Out</span>
                             ) : (
-                              <span>FROM ${Math.min(...event.tiers.map((t) => t.price))}.00</span>
+                              <span>FROM ₦{Math.min(...event.tiers.map((t) => t.price)).toLocaleString()}</span>
                             )}
                           </div>
                         </div>
@@ -546,7 +546,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
                               {isSoldOut ? (
                                 <span className="text-zinc-400 line-through">Sold Out</span>
                               ) : (
-                                <span>FROM ${Math.min(...event.tiers.map((t) => t.price))}.00</span>
+                                <span>FROM ₦{Math.min(...event.tiers.map((t) => t.price)).toLocaleString()}</span>
                               )}
                             </div>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors flex items-center gap-1">
