@@ -41,21 +41,21 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
   const [activeBuilderTab, setActiveBuilderTab] = useState<'editor' | 'preview'>('editor');
   
   // Basics Form State
-  const [title, setTitle] = useState('');
-  const [subtitle, setSubtitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [venueName, setVenueName] = useState('');
-  const [address, setAddress] = useState('');
+  const [title, setTitle] = useState('Modernist Vernissage 2026');
+  const [subtitle, setSubtitle] = useState('A curated retrospective highlighting stark forms, Brutalist architecture, and negative space.');
+  const [description, setDescription] = useState('A curated retrospective highlighting stark forms, Brutalist architecture, and negative space. Fully integrated with active ledger systems.');
+  const [startDate, setStartDate] = useState('2026-10-24T19:00');
+  const [endDate, setEndDate] = useState('2026-10-25T02:00');
+  const [venueName, setVenueName] = useState('The Concrete Gallery');
+  const [address, setAddress] = useState('1248 Design District, Stockholm');
   const [image, setImage] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuBHhZ8eM_Ieby0cE59Joo6iA-d4v8jU4DZKMk9Y8qX7NRF9YYej5Ka-8M18lASMmr1WI1X3NpkZsnHrt29XQm02b3PU4v0j6U-seTCqBF1dykjxLM9K-U8jEeO4ldfaqY4JYangMOqRXyg27DlghFKpP0mEJdy_KUoCD1SisPnvqWRVFybQlIV3hQX4M-WidRwxd42mrmFG8OGJL1yGmq7Ofa7mAeDElTzwRXjerqrrGTnKWGILaHPu4hnQM6nUeyEMMuFOs3PGBS8');
-  const [tags, setTags] = useState('Exhibition, Brutalist, Stockholm');
+  const [tags, setTags] = useState('');
 
   // Interactive Selected Design state for Basics Section
   // This satisfies: "I want you to make two designs for the Event Configuration page Basics section"
   const [basicsDesign, setBasicsDesign] = useState<'design-1' | 'design-2'>('design-1');
 
-  // Ticket Tiers State
+  // Ticket Categories State
   const [tiers, setTiers] = useState<TicketTier[]>([
     {
       id: 'tier-t1',
@@ -63,16 +63,16 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       price: 45,
       capacity: 500,
       soldCount: 0,
-      description: 'Standard entry to the main gallery exhibition space.',
+      description: 'Standard entry to the event.',
       status: 'available',
     },
     {
       id: 'tier-t2',
-      name: 'VIP Preview Access',
+      name: 'VIP Access',
       price: 150,
       capacity: 50,
       soldCount: 0,
-      description: 'Direct mezzanine access and complimentary champagne package.',
+      description: 'VIP lounge, drinks, and priority entry.',
       status: 'available',
     },
   ]);
@@ -85,7 +85,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
   // High-fidelity Customization States (supporting two designs)
   const [customizationDesign, setCustomizationDesign] = useState<'design-1' | 'design-2'>('design-1');
   const [typographyStyle, setTypographyStyle] = useState<'editorial' | 'modernist' | 'classic' | 'brutalist'>('editorial');
-  const [customUrl, setCustomUrl] = useState('summer-gala-2024');
+  const [customUrl, setCustomUrl] = useState('my-event');
   const [showAdvancedStyling, setShowAdvancedStyling] = useState(false);
   const [advancedCSS, setAdvancedCSS] = useState('/* Custom layout overrides */\n.evora-premium-badge {\n  letter-spacing: 0.35em;\n}');
   const [dragActive, setDragActive] = useState(false);
@@ -147,11 +147,11 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       price: 60,
       capacity: 150,
       soldCount: 0,
-      description: 'Standard gallery access benefits.',
+      description: 'Standard event access.',
       status: 'available',
     };
     setTiers([...tiers, nextTier]);
-    showToast('New ticket tier created successfully.', 'success');
+    showToast('New ticket type added.', 'success');
   };
 
   const handleRemoveTier = (id: string) => {
@@ -163,7 +163,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
     delete updatedQuantities[id];
     setPreviewQuantities(updatedQuantities);
     
-    showToast('Ticket tier removed.', 'info');
+    showToast('Ticket type removed.', 'info');
   };
 
   const handleUpdateQuantity = (tierId: string, delta: number) => {
@@ -201,31 +201,23 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       return;
     }
 
-    // Default times if user only picked dates without time
-    const finalStartDate = startDate
-      ? startDate
-      : new Date().toISOString().slice(0, 16);
-    const finalEndDate = endDate || undefined;
-
-    const dateFormatted = formatPreviewDate(finalStartDate);
-    const newEvent: any = {
+    const dateFormatted = formatPreviewDate(startDate);
+    const newEvent: Event = {
       id: `ev-new-${Math.floor(1000 + Math.random() * 9000)}`,
       title,
       subtitle,
       description,
       date: dateFormatted,
-      time: finalStartDate ? new Date(finalStartDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '19:00',
+      time: startDate ? new Date(startDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '19:00',
       location: `${venueName}, ${address}`,
       image,
       status: 'active',
       tiers,
       tags: tags.split(',').map((t) => t.trim()).filter((t) => t !== ''),
-      rawStartDate: finalStartDate,
-      rawEndDate: finalEndDate,
     };
 
     onAddEvent(newEvent);
-    showToast(`"${title}" published successfully!`, 'success');
+    showToast(`"${title}" published successfully to your listings!`, 'success');
   };
 
   // Preview total computation
@@ -272,25 +264,19 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
   // Auto fill high-end description stories
   const handleApplyTemplate = (type: 'exhibition' | 'salon' | 'performance') => {
     if (type === 'exhibition') {
-      setTitle('Afrobeats Night Live');
-      setDescription('A high-energy night of Afrobeats, Amapiano, and live DJ sets. Food vendors, drinks, and good vibes only.');
-      setTags('Afrobeats, Nightlife, Lagos');
-      setVenueName('Eko Atlantic City');
-      setAddress('Victoria Island, Lagos');
+      setDescription('A sharp, physical investigation into the intersections of modular concrete walls, severe geometry, and natural twilight illumination.');
+      setTags('');
+      setImage('https://lh3.googleusercontent.com/aida-public/AB6AXuBHhZ8eM_Ieby0cE59Joo6iA-d4v8jU4DZKMk9Y8qX7NRF9YYej5Ka-8M18lASMmr1WI1X3NpkZsnHrt29XQm02b3PU4v0j6U-seTCqBF1dykjxLM9K-U8jEeO4ldfaqY4JYangMOqRXyg27DlghFKpP0mEJdy_KUoCD1SisPnvqWRVFybQlIV3hQX4M-WidRwxd42mrmFG8OGJL1yGmq7Ofa7mAeDElTzwRXjerqrrGTnKWGILaHPu4hnQM6nUeyEMMuFOs3PGBS8');
     } else if (type === 'salon') {
-      setTitle('Lagos Tech Meetup');
-      setDescription('Intimate networking session for founders, developers, and creatives building the future of African tech.');
-      setTags('Tech, Networking, Startups');
-      setVenueName('Zone Tech Park');
-      setAddress('Gbagada Expressway, Lagos');
+      setDescription('An intimate chamber gathering presenting progressive dialogues on contemporary Nordic spatial curation, soundscapes, and raw basalt textures.');
+      setTags('Chamber, Discussion, Architecture');
+      setImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAV1PV6_opJO6pbY2HdAOLF-KqAgzXFv9qnApnC3FeTVLR77mtvtRwConHjqCy6ZLInUEH2PRBPTS0l5ODXQYEYhr6C6lxC2UfaiXpHSQfuAZ80juYzl9XwQD6tDhDh00Kf65aA8RFZcMAPZlMYdV8S1eegZhmFnebPa-P9nh0NLfMfhNDovqbe8lgd86uFBVBZcjRAXlLpUgAASAeLSEIFe0ugsN8bsPH9Ql4gL1n4ttcLqcw06HT6Iy8C2tvp8usJoATMWZC1qjA');
     } else if (type === 'performance') {
-      setTitle('Sunday Jollof & Jazz');
-      setDescription('Live jazz performances, premium jollof rice tasting from top chefs, and craft cocktails in a garden setting.');
-      setTags('Jazz, Food, Brunch');
-      setVenueName('Nok by Alara');
-      setAddress('12A Akin Olugbade, Victoria Island, Lagos');
+      setDescription('A dynamic audiotactile spatial ritual featuring classical acoustic cello strings paired with quadraphonic low-frequency synthesized pulses.');
+      setTags('Ritual, Sound, Classical');
+      setImage('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800');
     }
-    showToast('Applied event template', 'success');
+    showToast('Applied premium content template', 'success');
   };
 
   return (
@@ -300,11 +286,11 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       className="bg-[#faf9f6] dark:bg-black text-[#1b1c1a] dark:text-zinc-150 flex flex-col h-[calc(100vh-5rem)] w-full overflow-hidden transition-colors duration-300"
     >
       {/* Design Preset Selector & Context Indicator Banner */}
-      <div className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-850 px-8 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3 shrink-0">
+      <div className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-8 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3">
           <span className="flex h-2 w-2 rounded-full bg-[#a5351c]" />
           <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a5351c] dark:text-orange-400">
-            Interactive Drafting Workspace
+            Event Builder
           </p>
         </div>
 
@@ -320,7 +306,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   type="button"
                   onClick={() => {
                     setBasicsDesign('design-1');
-                    showToast('Switched to Design 1: Brutalist Monolith interface', 'info');
+                    showToast('Switched to Classic layout', 'info');
                   }}
                   className={`px-3 py-1 cursor-pointer transition-all ${
                     basicsDesign === 'design-1'
@@ -334,7 +320,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   type="button"
                   onClick={() => {
                     setBasicsDesign('design-2');
-                    showToast('Switched to Design 2: Neo-Minimalist Gallery interface', 'info');
+                    showToast('Switched to Card layout', 'info');
                   }}
                   className={`px-3 py-1 cursor-pointer transition-all ${
                     basicsDesign === 'design-2'
@@ -398,12 +384,12 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       <div className="flex-1 flex overflow-hidden">
         
         {/* LEFT PANEL: Form Editor (Scrollable) */}
-        <section className={`w-full md:w-1/2 h-full overflow-y-auto border-r border-[#e3e2df] dark:border-zinc-850 bg-[#faf9f6] dark:bg-zinc-950 relative z-10 flex flex-col no-scrollbar ${
+        <section className={`w-full md:w-1/2 h-full overflow-y-auto border-r border-[#e3e2df] dark:border-zinc-800 bg-[#faf9f6] dark:bg-zinc-950 relative z-10 flex flex-col no-scrollbar ${
           activeBuilderTab === 'editor' ? 'block' : 'hidden md:block'
         }`}>
           
           {/* Sub-Tabs for Event Builder */}
-          <div className="px-margin-edge py-6 flex gap-10 sticky top-0 bg-[#faf9f6] dark:bg-zinc-950/90 backdrop-blur-md z-20 border-b border-[#e3e2df] dark:border-zinc-850">
+          <div className="px-margin-edge py-6 flex gap-10 sticky top-0 bg-[#faf9f6] dark:bg-zinc-950/90 backdrop-blur-md z-20 border-b border-[#e3e2df] dark:border-zinc-800">
             <button
               onClick={() => setActiveTab('basics')}
               className={`font-mono text-[10px] font-bold uppercase tracking-widest pb-4 transition-all cursor-pointer bg-transparent border-0 ${
@@ -454,14 +440,14 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         {basicsDesign === 'design-1' ? 'PRESET 01' : 'PRESET 02'}
                       </span>
                       <span className="font-mono text-[9px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-                        {basicsDesign === 'design-1' ? 'Brutalist Monolith Style' : 'Neo-Minimalist Curation'}
+                        {basicsDesign === 'design-1' ? 'Classic Layout' : 'Card Layout'}
                       </span>
                     </div>
                     <h2 className="font-serif text-3xl font-normal tracking-tight text-[#1b1c1a] dark:text-white mb-2">
-                      Core Identity
+                      Event Details
                     </h2>
                     <p className="text-zinc-500 dark:text-zinc-400 font-light text-sm leading-relaxed">
-                      Define the architectural coordinates of your gathering. This information represents the primary interface for your attendees.
+                      Fill in the basic details about your event. This is what attendees will see.
                     </p>
                   </header>
 
@@ -470,13 +456,13 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     <form onSubmit={handleSaveEvent} className="space-y-10">
                       {/* Event Title */}
                       <div className="space-y-2">
-                        <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#58413c] dark:text-zinc-400 block">
+                        <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 block">
                           Event Title
                         </label>
                         <input
                           id="event-title-input"
-                          className="w-full bg-transparent border-0 border-b border-[#dfbfb9] dark:border-zinc-800 py-3.5 px-0 font-serif text-2xl font-light placeholder:text-zinc-300 dark:placeholder:text-zinc-700 text-[#1b1c1a] dark:text-white focus:border-[#a5351c] dark:focus:border-[#a5351c] focus:ring-0 transition-colors"
-                          placeholder="e.g. Modernist Vernissage 2024"
+                          className="w-full bg-transparent border-0 border-b border-zinc-200 dark:border-zinc-800 dark:border-zinc-800 py-3.5 px-0 font-serif text-2xl font-light placeholder:text-zinc-300 dark:placeholder:text-zinc-700 text-[#1b1c1a] dark:text-white focus:border-[#a5351c] dark:focus:border-[#a5351c] focus:ring-0 transition-colors"
+                          placeholder="e.g. Lagos Afrobeats Night"
                           type="text"
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
@@ -486,23 +472,23 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       {/* Date & Time Grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <div className="space-y-2">
-                          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#58413c] dark:text-zinc-400 block">
+                          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 block">
                             Start Date & Time
                           </label>
                           <input
                             id="event-date-input"
-                            className="w-full bg-transparent border-0 border-b border-[#dfbfb9] dark:border-zinc-800 py-3.5 px-0 font-sans text-[15px] font-light text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
+                            className="w-full bg-transparent border-0 border-b border-zinc-200 dark:border-zinc-800 dark:border-zinc-800 py-3.5 px-0 font-sans text-[15px] font-light text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
                             type="datetime-local"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#58413c] dark:text-zinc-400 block">
+                          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 block">
                             End Date & Time
                           </label>
                           <input
-                            className="w-full bg-transparent border-0 border-b border-[#dfbfb9] dark:border-zinc-800 py-3.5 px-0 font-sans text-[15px] font-light text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
+                            className="w-full bg-transparent border-0 border-b border-zinc-200 dark:border-zinc-800 dark:border-zinc-800 py-3.5 px-0 font-sans text-[15px] font-light text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
                             type="datetime-local"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
@@ -513,25 +499,25 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       {/* Venue Name & Address */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <div className="space-y-2">
-                          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#58413c] dark:text-zinc-400 block">
+                          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 block">
                             Venue Name
                           </label>
                           <input
                             id="event-venue-input"
-                            className="w-full bg-transparent border-0 border-b border-[#dfbfb9] dark:border-zinc-800 py-3.5 px-0 font-sans text-[15px] font-light placeholder:text-zinc-300 dark:placeholder:text-zinc-750 text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
-                            placeholder="The Concrete Gallery"
+                            className="w-full bg-transparent border-0 border-b border-zinc-200 dark:border-zinc-800 dark:border-zinc-800 py-3.5 px-0 font-sans text-[15px] font-light placeholder:text-zinc-300 dark:placeholder:text-zinc-750 text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
+                            placeholder="e.g. Eko Atlantic City"
                             type="text"
                             value={venueName}
                             onChange={(e) => setVenueName(e.target.value)}
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#58413c] dark:text-zinc-400 block">
+                          <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 block">
                             Address
                           </label>
                           <input
-                            className="w-full bg-transparent border-0 border-b border-[#dfbfb9] dark:border-zinc-800 py-3.5 px-0 font-sans text-[15px] font-light placeholder:text-zinc-300 dark:placeholder:text-zinc-750 text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
-                            placeholder="1248 Design District, Stockholm"
+                            className="w-full bg-transparent border-0 border-b border-zinc-200 dark:border-zinc-800 dark:border-zinc-800 py-3.5 px-0 font-sans text-[15px] font-light placeholder:text-zinc-300 dark:placeholder:text-zinc-750 text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
+                            placeholder="e.g. Victoria Island, Lagos"
                             type="text"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
@@ -541,11 +527,11 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
 
                       {/* Short Description */}
                       <div className="space-y-2">
-                        <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#58413c] dark:text-zinc-400 block">
+                        <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 block">
                           Short Description
                         </label>
                         <textarea
-                          className="w-full bg-transparent border border-[#dfbfb9] dark:border-zinc-800 p-5 font-sans text-sm font-light leading-relaxed text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors resize-none"
+                          className="w-full bg-transparent border border-zinc-200 dark:border-zinc-800 dark:border-zinc-800 p-5 font-sans text-sm font-light leading-relaxed text-[#1b1c1a] dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors resize-none"
                           placeholder="A brief, compelling overview of your event..."
                           rows={4}
                           value={description}
@@ -556,8 +542,8 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         </p>
                       </div>
 
-                      {/* Save Progress Button */}
-                      <div className="pt-6 border-t border-zinc-150 dark:border-zinc-850 flex items-center justify-between">
+                      {/* Save Event Button */}
+                      <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
                         <button
                           type="button"
                           onClick={() => {
@@ -567,13 +553,13 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                           }}
                           className="text-[#a5351c] font-mono text-[11px] font-bold uppercase tracking-widest hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer"
                         >
-                          Discard Draft
+                          Clear Form
                         </button>
                         <button
                           type="submit"
                           className="bg-zinc-900 dark:bg-white text-white dark:text-black hover:bg-[#a5351c] dark:hover:bg-[#a5351c] dark:hover:text-white px-10 py-4 font-mono text-[11px] font-bold uppercase tracking-widest transition-all cursor-pointer border-0"
                         >
-                          Save Progress
+                          Save Event
                         </button>
                       </div>
                     </form>
@@ -588,11 +574,11 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         <div className="flex items-center gap-2 mb-3">
                           <Sparkles className="h-4 w-4 text-[#a5351c]" />
                           <h4 className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
-                            Aesthetic Curation Templates
+                            Quick Templates
                           </h4>
                         </div>
                         <p className="text-xs text-zinc-500 dark:text-zinc-400 font-light mb-4">
-                          Select a curated narrative preset to auto-populate high-end copy, Stockholm tags, and high-contrast imagery instantly.
+                          Pick a template to auto-fill your event details.
                         </p>
                         <div className="flex flex-wrap gap-2">
                           <button
@@ -600,21 +586,21 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                             onClick={() => handleApplyTemplate('exhibition')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Afrobeats Night
+                            Exhibition Vernissage
                           </button>
                           <button
                             type="button"
                             onClick={() => handleApplyTemplate('salon')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Tech Meetup
+                            Nordic Salon
                           </button>
                           <button
                             type="button"
                             onClick={() => handleApplyTemplate('performance')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Jollof & Jazz
+                            Chamber Ritual
                           </button>
                         </div>
                       </div>
@@ -624,12 +610,12 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         <Type className="h-5 w-5 text-[#a5351c] shrink-0 mt-1" />
                         <div className="flex-grow space-y-1">
                           <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-                            Identities / Primary Heading
+                            Event Name
                           </span>
                           <input
                             id="event-title-input"
-                            className="w-full bg-transparent border-0 border-b border-zinc-150 dark:border-zinc-850 py-2.5 font-serif text-xl font-normal text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
-                            placeholder="e.g. Modernist Vernissage 2024"
+                            className="w-full bg-transparent border-0 border-b border-zinc-200 dark:border-zinc-800 py-2.5 font-serif text-xl font-normal text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
+                            placeholder="e.g. Lagos Afrobeats Night"
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
@@ -642,10 +628,10 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         <Calendar className="h-5 w-5 text-[#a5351c] shrink-0 mt-1" />
                         <div className="flex-grow space-y-4">
                           <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 block">
-                            Chronology / Scheduling
+                            Date & Time
                           </span>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div className="relative border-b border-zinc-150 dark:border-zinc-850 pb-2">
+                            <div className="relative border-b border-zinc-200 dark:border-zinc-800 pb-2">
                               <span className="font-mono text-[8px] uppercase font-bold text-zinc-400 block mb-1">Begins</span>
                               <input
                                 id="event-date-input"
@@ -655,7 +641,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                                 onChange={(e) => setStartDate(e.target.value)}
                               />
                             </div>
-                            <div className="relative border-b border-zinc-150 dark:border-zinc-850 pb-2">
+                            <div className="relative border-b border-zinc-200 dark:border-zinc-800 pb-2">
                               <span className="font-mono text-[8px] uppercase font-bold text-zinc-400 block mb-1">Concludes</span>
                               <input
                                 className="w-full bg-transparent border-0 py-1 px-0 font-sans text-xs font-light text-zinc-900 dark:text-white focus:ring-0 focus:border-0"
@@ -673,25 +659,25 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         <MapPin className="h-5 w-5 text-[#a5351c] shrink-0 mt-1" />
                         <div className="flex-grow space-y-4">
                           <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 block">
-                            Spatial / Geography Details
+                            Location
                           </span>
                           <div className="space-y-4">
-                            <div className="relative border-b border-zinc-150 dark:border-zinc-850 pb-2">
-                              <span className="font-mono text-[8px] uppercase font-bold text-zinc-400 block mb-1">Venue Gallery</span>
+                            <div className="relative border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                              <span className="font-mono text-[8px] uppercase font-bold text-zinc-400 block mb-1">Venue Name</span>
                               <input
                                 id="event-venue-input"
                                 className="w-full bg-transparent border-0 py-1 px-0 font-sans text-xs font-light text-zinc-900 dark:text-white focus:ring-0 focus:border-0"
-                                placeholder="The Concrete Gallery"
+                                placeholder="e.g. Eko Atlantic City"
                                 type="text"
                                 value={venueName}
                                 onChange={(e) => setVenueName(e.target.value)}
                               />
                             </div>
-                            <div className="relative border-b border-zinc-150 dark:border-zinc-850 pb-2">
-                              <span className="font-mono text-[8px] uppercase font-bold text-zinc-400 block mb-1">Street Address</span>
+                            <div className="relative border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                              <span className="font-mono text-[8px] uppercase font-bold text-zinc-400 block mb-1">Address</span>
                               <input
                                 className="w-full bg-transparent border-0 py-1 px-0 font-sans text-xs font-light text-zinc-900 dark:text-white focus:ring-0 focus:border-0"
-                                placeholder="1248 Design District, Stockholm"
+                                placeholder="e.g. Victoria Island, Lagos"
                                 type="text"
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
@@ -706,24 +692,24 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         <FileText className="h-5 w-5 text-[#a5351c] shrink-0 mt-1" />
                         <div className="flex-grow space-y-2">
                           <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-                            Exhibition Overview Narrative
+                            Event Description
                           </span>
                           <textarea
-                            className="w-full bg-transparent border-0 border-b border-zinc-150 dark:border-zinc-850 py-2.5 font-sans text-xs font-light leading-relaxed text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 resize-none"
-                            placeholder="State the creative manifest for this showcase..."
+                            className="w-full bg-transparent border-0 border-b border-zinc-200 dark:border-zinc-800 py-2.5 font-sans text-xs font-light leading-relaxed text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 resize-none"
+                            placeholder="Describe your event..."
                             rows={3}
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                           />
                           <div className="flex justify-between items-center text-[8px] font-mono uppercase tracking-wider text-zinc-400 pt-1">
-                            <span>Limitless Drafting</span>
+                            <span>Event description</span>
                             <span>{description.length} Characters</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Save Progress Button */}
-                      <div className="pt-6 border-t border-zinc-150 dark:border-zinc-850 flex items-center justify-between">
+                      {/* Save Event Button */}
+                      <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
                         <button
                           type="button"
                           onClick={() => {
@@ -733,13 +719,13 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                           }}
                           className="text-[#a5351c] font-mono text-[11px] font-bold uppercase tracking-widest hover:underline underline-offset-4 bg-transparent border-0 cursor-pointer"
                         >
-                          Reset Fields
+                          Clear Form
                         </button>
                         <button
                           type="submit"
                           className="bg-zinc-900 dark:bg-white text-white dark:text-black hover:bg-[#a5351c] dark:hover:bg-[#a5351c] dark:hover:text-white px-10 py-4 font-mono text-[11px] font-bold uppercase tracking-widest transition-all cursor-pointer border-0"
                         >
-                          Save Draft Settings
+                          Save Event
                         </button>
                       </div>
                     </form>
@@ -759,10 +745,10 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                 >
                   <header className="mb-8">
                     <h2 className="font-serif text-3xl font-normal text-[#1b1c1a] dark:text-white mb-2">
-                      Ticket Tiers
+                      Ticket Categories
                     </h2>
                     <p className="text-zinc-500 dark:text-zinc-400 font-light text-sm leading-relaxed">
-                      Define pricing structures, availability parameters, and admission perks.
+                      Set up your ticket types, prices, and how many are available.
                     </p>
                   </header>
 
@@ -794,7 +780,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         <div className="relative">
                           <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Ticket Name</label>
                           <input
-                            className="w-full border-b border-zinc-150 dark:border-zinc-850 border-x-0 border-t-0 bg-transparent px-0 py-2.5 text-base font-serif text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
+                            className="w-full border-b border-zinc-200 dark:border-zinc-800 border-x-0 border-t-0 bg-transparent px-0 py-2.5 text-base font-serif text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
                             type="text"
                             value={tier.name}
                             onChange={(e) => handleUpdateTier(tier.id, 'name', e.target.value)}
@@ -804,11 +790,11 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         {/* Split row for Price and Capacity */}
                         <div className="flex gap-6">
                           <div className="flex-1 relative">
-                            <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Price (₦)</label>
+                            <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Price (USD)</label>
                             <div className="relative flex items-center">
-                              <span className="absolute left-0 font-mono text-zinc-400 text-sm">₦</span>
+                              <span className="absolute left-0 font-mono text-zinc-400 text-sm">$</span>
                               <input
-                                  className="w-full border-b border-zinc-150 dark:border-zinc-850 border-x-0 border-t-0 bg-transparent pl-4 pr-0 py-2.5 text-base font-mono text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
+                                  className="w-full border-b border-zinc-200 dark:border-zinc-800 border-x-0 border-t-0 bg-transparent pl-4 pr-0 py-2.5 text-base font-mono text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
                                   type="number"
                                   value={tier.price}
                                   onChange={(e) => handleUpdateTier(tier.id, 'price', Number(e.target.value))}
@@ -816,9 +802,9 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                             </div>
                           </div>
                           <div className="flex-1 relative">
-                            <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Release Capacity</label>
+                            <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Available Tickets</label>
                             <input
-                              className="w-full border-b border-zinc-150 dark:border-zinc-850 border-x-0 border-t-0 bg-transparent px-0 py-2.5 text-base font-mono text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
+                              className="w-full border-b border-zinc-200 dark:border-zinc-800 border-x-0 border-t-0 bg-transparent px-0 py-2.5 text-base font-mono text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
                               type="number"
                               value={tier.capacity}
                               onChange={(e) => handleUpdateTier(tier.id, 'capacity', Number(e.target.value))}
@@ -828,13 +814,13 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
 
                         {/* Description Input */}
                         <div className="relative">
-                          <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Inclusions / Perks (Optional)</label>
+                          <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">What's Included (Optional)</label>
                           <textarea
-                            className="w-full border-b border-zinc-150 dark:border-zinc-850 border-x-0 border-t-0 bg-transparent px-0 py-2 text-sm text-zinc-700 dark:text-zinc-300 focus:border-[#a5351c] focus:ring-0 transition-colors resize-none leading-relaxed"
+                            className="w-full border-b border-zinc-200 dark:border-zinc-800 border-x-0 border-t-0 bg-transparent px-0 py-2 text-sm text-zinc-700 dark:text-zinc-300 focus:border-[#a5351c] focus:ring-0 transition-colors resize-none leading-relaxed"
                             rows={2}
                             value={tier.description || ''}
                             onChange={(e) => handleUpdateTier(tier.id, 'description', e.target.value)}
-                            placeholder="Brief description of perks..."
+                            placeholder="e.g. VIP lounge, free drinks..."
                           />
                         </div>
                       </div>
@@ -848,7 +834,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     className="w-full border border-[#a5351c] text-[#a5351c] font-mono text-[11px] font-bold uppercase tracking-wider py-4 flex items-center justify-center hover:bg-[#a5351c] hover:text-white transition-all duration-300 cursor-pointer bg-transparent"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Another Tier
+                    Add Another Ticket Type
                   </button>
                 </motion.div>
               )}
@@ -879,7 +865,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       </header>
 
                       {/* Step 1: Brand Accent Color */}
-                      <div className="space-y-3.5 border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="space-y-3.5 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <div className="flex justify-between items-center">
                           <label htmlFor="color-input" className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500">
                             01 / Brand Color
@@ -921,7 +907,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       </div>
 
                       {/* Step 2: Drag and Drop Header Image */}
-                      <div className="space-y-3.5 border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="space-y-3.5 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500">
                           02 / Header Image
                         </label>
@@ -953,7 +939,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       </div>
 
                       {/* Step 3: Typography Style Dropdown */}
-                      <div className="space-y-3.5 border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="space-y-3.5 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <label htmlFor="typography-select-d1" className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500">
                           03 / Typography Style
                         </label>
@@ -984,7 +970,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       </div>
 
                       {/* Step 4: Custom URL */}
-                      <div className="space-y-3.5 border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="space-y-3.5 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <label htmlFor="custom-url-d1" className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500">
                           04 / Custom URL
                         </label>
@@ -1009,7 +995,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       </div>
 
                       {/* Advanced Options Accordion */}
-                      <div className="border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <button
                           type="button"
                           onClick={() => {
@@ -1048,7 +1034,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                                 />
                               </div>
                               
-                              <div className="flex items-center justify-between border border-zinc-150 dark:border-zinc-850 p-3.5 bg-zinc-50 dark:bg-zinc-900/30">
+                              <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-800 p-3.5 bg-zinc-50 dark:bg-zinc-900/30">
                                 <div className="space-y-0.5">
                                   <p className="font-mono text-[9px] font-bold uppercase text-zinc-900 dark:text-white">Fine-tuned Typography Accent</p>
                                   <p className="text-[10px] text-zinc-400 dark:text-zinc-500">Apply classical elegant Roman serif italics for main displays.</p>
@@ -1088,7 +1074,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       </header>
 
                       {/* Step 1: Pre-curated Artistic Tones */}
-                      <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <div className="flex justify-between items-end">
                           <div>
                             <span className="font-serif text-[11px] italic text-zinc-400 block">Element 01</span>
@@ -1114,7 +1100,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                               className={`flex items-center gap-3 p-3 text-left border cursor-pointer transition-all ${
                                 accentColor === color.hex
                                   ? 'border-[#a5351c] bg-[#a5351c]/5 dark:bg-[#a5351c]/10'
-                                  : 'border-zinc-150 dark:border-zinc-850 hover:border-zinc-300'
+                                  : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300'
                               }`}
                             >
                               <div className="w-5 h-5 rounded-full shrink-0 shadow-inner" style={{ backgroundColor: color.hex }} />
@@ -1148,7 +1134,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       </div>
 
                       {/* Step 2: Curation Image Gallery presets */}
-                      <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <div className="flex justify-between items-end">
                           <div>
                             <span className="font-serif text-[11px] italic text-zinc-400 block">Element 02</span>
@@ -1214,7 +1200,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       </div>
 
                       {/* Step 3: Typography Style Visual Cards */}
-                      <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <div className="flex justify-between items-end">
                           <div>
                             <span className="font-serif text-[11px] italic text-zinc-400 block">Element 03</span>
@@ -1264,7 +1250,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                               className={`p-4 border text-left cursor-pointer transition-all duration-300 relative ${
                                 typographyStyle === item.style
                                   ? 'border-[#a5351c] bg-[#a5351c]/5 dark:bg-[#a5351c]/10'
-                                  : 'border-zinc-150 dark:border-zinc-850 hover:border-zinc-200 dark:hover:border-zinc-850'
+                                  : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-800'
                               }`}
                             >
                               <p className="font-mono text-[8px] text-zinc-400 dark:text-zinc-500 uppercase leading-none mb-3">
@@ -1287,19 +1273,19 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         </div>
                       </div>
 
-                      {/* Step 4: Dossier Coordinates (Custom URL) */}
-                      <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      {/* Step 4: Custom URL (Custom URL) */}
+                      <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <div className="flex justify-between items-end">
                           <div>
                             <span className="font-serif text-[11px] italic text-zinc-400 block">Element 04</span>
-                            <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Dossier Coordinates</span>
+                            <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Custom URL</span>
                           </div>
                         </div>
 
-                        <div className="border border-zinc-200 dark:border-zinc-850 bg-white dark:bg-zinc-900 p-4 relative overflow-hidden text-left">
+                        <div className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 relative overflow-hidden text-left">
                           <div className="flex items-center gap-2 mb-3">
                             <span className="material-symbols-outlined text-sm text-[#a5351c]">language</span>
-                            <span className="font-mono text-[8px] font-bold uppercase text-zinc-400">Public DNS mapping</span>
+                            <span className="font-mono text-[8px] font-bold uppercase text-zinc-400">Event link</span>
                           </div>
                           
                           <div className="flex items-center border-b border-zinc-200 dark:border-zinc-800 pb-1.5">
@@ -1317,13 +1303,13 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                           </div>
                           
                           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-light mt-2.5 leading-normal italic">
-                            Your secure attendee portal will publish instantly to this coordinate ledger.
+                            Your event page will be live at this URL.
                           </p>
                         </div>
                       </div>
 
                       {/* Advanced Accordion Elegant Style */}
-                      <div className="border-t border-zinc-200 dark:border-zinc-850 pt-6">
+                      <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6">
                         <button
                           type="button"
                           onClick={() => {
@@ -1333,7 +1319,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         >
                           <span className="flex items-center gap-2">
                             <span className="w-1.5 h-1.5 bg-[#a5351c] rounded-full" />
-                            Aesthetic Overrides
+                            Advanced Settings
                           </span>
                           <span className={`material-symbols-outlined text-sm transition-transform duration-300 ${showAdvancedStyling ? 'rotate-180' : ''}`}>
                             expand_more
@@ -1349,17 +1335,17 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                               className="overflow-hidden mt-4 space-y-4"
                             >
                               <div className="space-y-2">
-                                <p className="font-mono text-[8px] font-bold uppercase tracking-wider text-zinc-400">Custom CSS Ledger</p>
+                                <p className="font-mono text-[8px] font-bold uppercase tracking-wider text-zinc-400">Custom CSS</p>
                                 <textarea
                                   value={advancedCSS}
                                   onChange={(e) => setAdvancedCSS(e.target.value)}
                                   rows={4}
-                                  className="w-full border border-zinc-200 dark:border-zinc-850 bg-[#faf9f6] dark:bg-zinc-950 p-3 text-xs font-mono text-zinc-800 dark:text-zinc-200 focus:border-[#a5351c] focus:ring-0 transition-colors resize-none leading-relaxed"
+                                  className="w-full border border-zinc-200 dark:border-zinc-800 bg-[#faf9f6] dark:bg-zinc-950 p-3 text-xs font-mono text-zinc-800 dark:text-zinc-200 focus:border-[#a5351c] focus:ring-0 transition-colors resize-none leading-relaxed"
                                   placeholder="/* Custom CSS variables */"
                                 />
                               </div>
                               
-                              <div className="flex items-center justify-between border border-zinc-150 dark:border-zinc-850 p-4 bg-[#faf9f6] dark:bg-zinc-900/40">
+                              <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-800 p-4 bg-[#faf9f6] dark:bg-zinc-900/40">
                                 <div className="space-y-0.5">
                                   <p className="font-serif text-xs font-semibold text-zinc-900 dark:text-white leading-tight">Serif Italic Displays</p>
                                   <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-normal">Forces visual title headers to render in classic italic serif style.</p>
@@ -1397,7 +1383,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
           activeBuilderTab === 'preview' ? 'block' : 'hidden md:block'
         }`}>
           {/* Sticky header for Live Preview Options */}
-          <div className="h-16 flex items-center justify-between px-8 border-b border-[#e3e2df] dark:border-zinc-850 bg-[#f4f3f0]/90 dark:bg-[#111]/90 backdrop-blur-sm shrink-0 z-10 absolute top-0 w-full text-left">
+          <div className="h-16 flex items-center justify-between px-8 border-b border-[#e3e2df] dark:border-zinc-800 bg-[#f4f3f0]/90 dark:bg-[#111]/90 backdrop-blur-sm shrink-0 z-10 absolute top-0 w-full text-left">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-xs text-zinc-400">info</span>
               <span className="font-mono text-[9px] font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-widest">
@@ -1445,7 +1431,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.3 }}
-                  className={`bg-[#faf9f6] dark:bg-zinc-950 border border-[#e3e2df] dark:border-zinc-850 shadow-2xl relative overflow-hidden flex flex-col shrink-0 transition-all duration-300 ${
+                  className={`bg-[#faf9f6] dark:bg-zinc-950 border border-[#e3e2df] dark:border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col shrink-0 transition-all duration-300 ${
                     previewDevice === 'phone'
                       ? 'w-[375px] h-[640px] mb-8'
                       : 'w-full max-w-lg aspect-[3/4] mb-8'
@@ -1465,7 +1451,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     <div className="flex-grow max-w-[70%] mx-auto bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded px-3 py-1 flex items-center justify-center gap-1.5 shadow-sm">
                       <span className="material-symbols-outlined text-[11px] text-emerald-500 fill-1 font-bold">lock</span>
                       <span className="font-mono text-[9px] text-zinc-500 dark:text-zinc-400 truncate select-none">
-                        evora.io/{customUrl || 'summer-gala-2024'}
+                        evora.io/{customUrl || 'my-event'}
                       </span>
                     </div>
                   </div>
@@ -1475,12 +1461,12 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     {/* Live Preview Mode Badge */}
                     <div className="absolute top-4 right-4 z-20">
                       <span className="font-mono text-[7px] tracking-[0.25em] uppercase px-2 py-0.5 bg-black/60 backdrop-blur-md text-white border border-white/10 select-none">
-                        Curation Live
+                        Live Preview
                       </span>
                     </div>
 
                     {/* Navigation bar mockup inside the event page */}
-                    <nav className="border-b border-zinc-150 dark:border-zinc-850 px-6 py-4 flex justify-between items-center bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
+                    <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
                       <span 
                         className={`text-sm tracking-tight ${getTypographyClasses(typographyStyle).heading}`}
                         style={{ color: accentColor }}
@@ -1507,10 +1493,10 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         
                         <div className="absolute bottom-4 left-6 text-white text-left">
                           <span className="font-mono text-[8px] text-white/70 uppercase tracking-widest block mb-0.5">
-                            Summer Series 2026
+                            Upcoming Event
                           </span>
                           <h2 className={`text-2xl text-white ${getTypographyClasses(typographyStyle).heading} ${useItalicHeader ? 'italic' : ''}`}>
-                            {title || 'The Modern Gala of Light'}
+                            {title || 'Your Event Name'}
                           </h2>
                         </div>
                       </div>
@@ -1540,7 +1526,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                               <div className="flex items-center gap-2">
                                 <span className="material-symbols-outlined text-xs text-zinc-400">place</span>
                                 <span className="font-mono text-[9px] text-zinc-500 uppercase tracking-wider truncate">
-                                  {venueName || 'The Glass Pavilion'}
+                                  {venueName || 'Venue'}
                                 </span>
                               </div>
                             </div>
@@ -1559,21 +1545,21 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
 
                       {/* Additional Curation columns */}
                       <div className="px-6 space-y-4 border-t border-zinc-200 dark:border-zinc-800 pt-6 text-left">
-                        <h4 className="font-mono text-[8px] font-bold uppercase tracking-widest text-zinc-400">Exhibition Ledger</h4>
+                        <h4 className="font-mono text-[8px] font-bold uppercase tracking-widest text-zinc-400">Event Gallery</h4>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <div className="aspect-[4/3] bg-zinc-200 dark:bg-zinc-900 overflow-hidden">
                               <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxXB5MlCyVpm69xncw1VvC0_seBkfKhfTXT3ZqN3I9YiRGixoqVqwd3soKYI7gCNBs48einJOaobXeldJdCZdPp_YzNB2yA5Lf_xiVBuMH-5V67hpaI9NTsvC_oI1vPCTwkHRD1pwR2HiTSI1slMOqEunmtzVu2zEMGNNGaU0r-YzJBBBBZMX6F2NevK4HTRVIKXljCrEAh1pNMwRc_XX04tH8n_IF_b_Zbanm5ETbj5dtK2q0L1viCZuV66rxl2aJDGvqGDUlxl0" className="w-full h-full object-cover grayscale" alt="Soundscapes" />
                             </div>
-                            <h5 className={`text-xs text-zinc-950 dark:text-white leading-snug ${getTypographyClasses(typographyStyle).heading}`}>Immersive Soundscapes</h5>
-                            <p className="text-[10px] text-zinc-400 font-light leading-snug">Spatial cellos paired with low frequency electronic tones.</p>
+                            <h5 className={`text-xs text-zinc-950 dark:text-white leading-snug ${getTypographyClasses(typographyStyle).heading}`}>Live Entertainment</h5>
+                            <p className="text-[10px] text-zinc-400 font-light leading-snug">Live performances and DJ sets throughout the night.</p>
                           </div>
                           <div className="space-y-2">
                             <div className="aspect-[4/3] bg-zinc-200 dark:bg-zinc-900 overflow-hidden">
                               <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuClRUUklDPdHeZyFWqVqGv1MVKoMX-T_MVqnHM-j8AlgO71rnRM0NMkFCoCQQ_gYtas3FaQbrNxaWienecel3xFZdvFwOrwWOBQpCzHcRac4LxodFFv6DBvyIs1W30sus8SxHEPztp12vh8tiyMj05oGalh0BhpAWDdeaTUO-if0skGLRFuo1wV8tz961hWKhHqfrjqUwtFeeqZ7eTlYlbwZ_wGN8cfsN_6WOMfb1nb2gf35-1Lkkv2dbeGoB-bqwrtnT_XsG7SlbU" className="w-full h-full object-cover grayscale" alt="Interior" />
                             </div>
-                            <h5 className={`text-xs text-zinc-950 dark:text-white leading-snug ${getTypographyClasses(typographyStyle).heading}`}>Architectural Tour</h5>
-                            <p className="text-[10px] text-zinc-400 font-light leading-snug">Curator walkthrough exploring modular brutalist spaces.</p>
+                            <h5 className={`text-xs text-zinc-950 dark:text-white leading-snug ${getTypographyClasses(typographyStyle).heading}`}>Venue Experience</h5>
+                            <p className="text-[10px] text-zinc-400 font-light leading-snug">Explore the venue and enjoy the atmosphere.</p>
                           </div>
                         </div>
                       </div>
@@ -1629,7 +1615,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       <h3 className={`font-serif text-3xl font-medium leading-none tracking-tight text-white ${
                         useItalicHeader ? 'italic' : ''
                       }`}>
-                        {title || 'Your Event Title'}
+                        {title || 'Your Event Name'}
                       </h3>
                     </div>
 
@@ -1640,7 +1626,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         "{subtitle || 'Define the foundational description coordinates.'}"
                       </p>
                       <p className="font-mono text-[10px] text-zinc-300 font-bold tracking-wide uppercase">
-                        {venueName || 'The Venue Location'} • <span className="font-light text-zinc-400 capitalize">{address || 'Stockholm'}</span>
+                        {venueName || 'Venue'} • <span className="font-light text-zinc-400 capitalize">{address || 'Location'}</span>
                       </p>
                     </div>
 
@@ -1648,7 +1634,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     <div className="bg-black/85 backdrop-blur-md border border-white/10 p-4 mt-2 flex justify-between items-center">
                       <div>
                         <span className="font-mono text-[7px] text-zinc-400 uppercase tracking-widest block">Admission</span>
-                        <span className="font-serif text-base text-white">₦{previewTotal > 0 ? previewTotal.toLocaleString() : (tiers[0]?.price || 45).toLocaleString()}</span>
+                        <span className="font-serif text-base text-white">${previewTotal > 0 ? previewTotal.toFixed(2) : (tiers[0]?.price || 45).toFixed(2)}</span>
                       </div>
                       <button
                         type="button"
@@ -1679,10 +1665,10 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   {/* Elegant Top Navigation Header Bar */}
                   <div className="border-b border-zinc-200 p-4 shrink-0 flex justify-between items-center bg-white">
                     <span className="font-mono text-[8px] font-bold uppercase tracking-[0.25em] text-[#a5351c]">
-                      EVORA SHOWCASE
+                      EVORA
                     </span>
                     <span className="font-mono text-[8px] text-zinc-400 uppercase">
-                      VERIFIED CURATOR
+                      EVENT PAGE
                     </span>
                   </div>
 
@@ -1712,14 +1698,14 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                       <div className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 bg-[#a5351c] rounded-full" />
                         <p className="font-mono text-[8px] font-bold uppercase tracking-wider text-[#a5351c]">
-                          {venueName || 'The Concrete Gallery'}
+                          {venueName || 'Venue'}
                         </p>
                       </div>
 
                       <h1 className={`font-serif text-3xl font-light text-zinc-950 leading-tight ${
                         useItalicHeader ? 'italic' : ''
                       }`}>
-                        {title || 'Modernist Vernissage 2026'}
+                        {title || 'Your Event Name'}
                       </h1>
 
                       <p className="font-sans text-[11px] font-light text-zinc-500 leading-relaxed max-w-sm">
@@ -1733,15 +1719,15 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     {/* Asymmetrical Date & Details Matrix */}
                     <div className="grid grid-cols-2 gap-4 text-xs">
                       <div>
-                        <span className="font-mono text-[8px] font-bold text-zinc-400 block uppercase mb-1">Curation Date</span>
+                        <span className="font-mono text-[8px] font-bold text-zinc-400 block uppercase mb-1">Event Date</span>
                         <p className="font-mono text-[10px] text-zinc-900 font-bold leading-normal">
                           {startDate ? formatPreviewDate(startDate).split('•')[0] : 'October 24, 2026'}
                         </p>
                       </div>
                       <div>
-                        <span className="font-mono text-[8px] font-bold text-zinc-400 block uppercase mb-1">Curation Place</span>
+                        <span className="font-mono text-[8px] font-bold text-zinc-400 block uppercase mb-1">Event Venue</span>
                         <p className="font-sans text-[10px] text-zinc-900 leading-normal">
-                          {address || '1248 Design District, Stockholm'}
+                          {address || 'Event Address'}
                         </p>
                       </div>
                     </div>
@@ -1751,9 +1737,9 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   {/* Elegant bottom catalog footer with bar indicators */}
                   <div className="border-t border-zinc-200 p-4 bg-white flex justify-between items-center shrink-0">
                     <div>
-                      <span className="font-mono text-[7px] text-zinc-400 uppercase tracking-widest block">Entry Price</span>
+                      <span className="font-mono text-[7px] text-zinc-400 uppercase tracking-widest block">Starting From</span>
                       <span className="font-mono text-xs font-bold text-zinc-950">
-                        ₦{(tiers[0]?.price || 45).toLocaleString()}
+                        ${(tiers[0]?.price || 45).toFixed(2)} USD
                       </span>
                     </div>
 
@@ -1761,7 +1747,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-500" />
                       <span className="font-mono text-[8px] font-bold uppercase tracking-wider text-zinc-500">
-                        Ledger Open
+                        Tickets Available
                       </span>
                     </div>
                   </div>
@@ -1773,47 +1759,6 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
 
         </section>
 
-      </div>
-
-      {/* Persistent Action Bar — visible on all tabs */}
-      <div className="sticky bottom-0 z-30 border-t border-zinc-200 dark:border-zinc-900 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-              Unsaved Draft
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setTitle('');
-                setSubtitle('');
-                setDescription('');
-                setStartDate('');
-                setEndDate('');
-                setVenueName('');
-                setAddress('');
-                setImage('');
-                setTags('');
-                setTiers([{ id: 'tier-new-1', name: 'General Admission', price: 0, capacity: 100, soldCount: 0, description: '', status: 'available' }]);
-                setActiveTab('basics');
-                showToast('Form cleared for new event.', 'info');
-              }}
-              className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400 px-6 py-2.5 font-mono text-[10px] font-bold uppercase tracking-wider hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
-            >
-              New Event
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSaveEvent()}
-              className="bg-zinc-900 dark:bg-white text-white dark:text-black px-8 py-2.5 font-mono text-[10px] font-bold uppercase tracking-wider hover:bg-[#D4573B] dark:hover:bg-[#D4573B] dark:hover:text-white transition-colors"
-            >
-              Publish Event
-            </button>
-          </div>
-        </div>
       </div>
     </motion.div>
   );
