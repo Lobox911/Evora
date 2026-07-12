@@ -41,13 +41,13 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
   const [activeBuilderTab, setActiveBuilderTab] = useState<'editor' | 'preview'>('editor');
   
   // Basics Form State
-  const [title, setTitle] = useState('Modernist Vernissage 2026');
-  const [subtitle, setSubtitle] = useState('A curated retrospective highlighting stark forms, Brutalist architecture, and negative space.');
-  const [description, setDescription] = useState('A curated retrospective highlighting stark forms, Brutalist architecture, and negative space. Fully integrated with active ledger systems.');
-  const [startDate, setStartDate] = useState('2026-10-24T19:00');
-  const [endDate, setEndDate] = useState('2026-10-25T02:00');
-  const [venueName, setVenueName] = useState('The Concrete Gallery');
-  const [address, setAddress] = useState('1248 Design District, Stockholm');
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [venueName, setVenueName] = useState('');
+  const [address, setAddress] = useState('');
   const [image, setImage] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuBHhZ8eM_Ieby0cE59Joo6iA-d4v8jU4DZKMk9Y8qX7NRF9YYej5Ka-8M18lASMmr1WI1X3NpkZsnHrt29XQm02b3PU4v0j6U-seTCqBF1dykjxLM9K-U8jEeO4ldfaqY4JYangMOqRXyg27DlghFKpP0mEJdy_KUoCD1SisPnvqWRVFybQlIV3hQX4M-WidRwxd42mrmFG8OGJL1yGmq7Ofa7mAeDElTzwRXjerqrrGTnKWGILaHPu4hnQM6nUeyEMMuFOs3PGBS8');
   const [tags, setTags] = useState('');
 
@@ -201,8 +201,14 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       return;
     }
 
-    const dateFormatted = formatPreviewDate(startDate);
-    const newEvent: Event = {
+    // Default times if user only picked dates without time
+    const finalStartDate = startDate
+      ? startDate
+      : new Date().toISOString().slice(0, 16);
+    const finalEndDate = endDate || undefined;
+
+    const dateFormatted = formatPreviewDate(finalStartDate);
+    const newEvent: any = {
       id: `ev-new-${Math.floor(1000 + Math.random() * 9000)}`,
       title,
       subtitle,
@@ -214,6 +220,8 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       status: 'active',
       tiers,
       tags: tags.split(',').map((t) => t.trim()).filter((t) => t !== ''),
+      rawStartDate: finalStartDate,
+      rawEndDate: finalEndDate,
     };
 
     onAddEvent(newEvent);
@@ -264,29 +272,29 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
   // Auto fill high-end description stories
   const handleApplyTemplate = (type: 'exhibition' | 'salon' | 'performance') => {
     if (type === 'exhibition') {
-      setDescription('A sharp, physical investigation into the intersections of modular concrete walls, severe geometry, and natural twilight illumination.');
+      setDescription('A high-energy night of Afrobeats, Amapiano, and live DJ sets. Food vendors, drinks, and good vibes only.');
       setTags('');
       setImage('https://lh3.googleusercontent.com/aida-public/AB6AXuBHhZ8eM_Ieby0cE59Joo6iA-d4v8jU4DZKMk9Y8qX7NRF9YYej5Ka-8M18lASMmr1WI1X3NpkZsnHrt29XQm02b3PU4v0j6U-seTCqBF1dykjxLM9K-U8jEeO4ldfaqY4JYangMOqRXyg27DlghFKpP0mEJdy_KUoCD1SisPnvqWRVFybQlIV3hQX4M-WidRwxd42mrmFG8OGJL1yGmq7Ofa7mAeDElTzwRXjerqrrGTnKWGILaHPu4hnQM6nUeyEMMuFOs3PGBS8');
     } else if (type === 'salon') {
-      setDescription('An intimate chamber gathering presenting progressive dialogues on contemporary Nordic spatial curation, soundscapes, and raw basalt textures.');
-      setTags('Chamber, Discussion, Architecture');
+      setDescription('Intimate networking session for founders, developers, and creatives building the future of African tech.');
+      setTags('Tech, Networking, Startups');
       setImage('https://lh3.googleusercontent.com/aida-public/AB6AXuAV1PV6_opJO6pbY2HdAOLF-KqAgzXFv9qnApnC3FeTVLR77mtvtRwConHjqCy6ZLInUEH2PRBPTS0l5ODXQYEYhr6C6lxC2UfaiXpHSQfuAZ80juYzl9XwQD6tDhDh00Kf65aA8RFZcMAPZlMYdV8S1eegZhmFnebPa-P9nh0NLfMfhNDovqbe8lgd86uFBVBZcjRAXlLpUgAASAeLSEIFe0ugsN8bsPH9Ql4gL1n4ttcLqcw06HT6Iy8C2tvp8usJoATMWZC1qjA');
     } else if (type === 'performance') {
-      setDescription('A dynamic audiotactile spatial ritual featuring classical acoustic cello strings paired with quadraphonic low-frequency synthesized pulses.');
-      setTags('Ritual, Sound, Classical');
+      setDescription('Live jazz performances, premium jollof rice tasting from top chefs, and craft cocktails in a garden setting.');
+      setTags('Jazz, Food, Brunch');
       setImage('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800');
     }
-    showToast('Applied premium content template', 'success');
+    showToast('Applied event template', 'success');
   };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="bg-[#faf9f6] dark:bg-black text-[#1b1c1a] dark:text-zinc-150 flex flex-col h-[calc(100vh-5rem)] w-full overflow-hidden transition-colors duration-300"
+      className="bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-100 flex flex-col h-[calc(100vh-8rem)] w-full overflow-hidden transition-colors duration-300"
     >
       {/* Design Preset Selector & Context Indicator Banner */}
-      <div className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-8 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3 shrink-0">
+      <div className="bg-zinc-50 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 px-4 sm:px-8 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3">
           <span className="flex h-2 w-2 rounded-full bg-[#a5351c]" />
           <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a5351c] dark:text-orange-400">
@@ -384,12 +392,12 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
       <div className="flex-1 flex overflow-hidden">
         
         {/* LEFT PANEL: Form Editor (Scrollable) */}
-        <section className={`w-full md:w-1/2 h-full overflow-y-auto border-r border-[#e3e2df] dark:border-zinc-800 bg-[#faf9f6] dark:bg-zinc-950 relative z-10 flex flex-col no-scrollbar ${
+        <section className={`w-full md:w-1/2 h-full overflow-y-auto border-r border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 relative z-10 flex flex-col no-scrollbar ${
           activeBuilderTab === 'editor' ? 'block' : 'hidden md:block'
         }`}>
           
           {/* Sub-Tabs for Event Builder */}
-          <div className="px-margin-edge py-6 flex gap-10 sticky top-0 bg-[#faf9f6] dark:bg-zinc-950/90 backdrop-blur-md z-20 border-b border-[#e3e2df] dark:border-zinc-800">
+          <div className="px-4 sm:px-8 py-5 flex gap-8 sticky top-0 bg-zinc-50/95 dark:bg-zinc-950/95 backdrop-blur-md z-20 border-b border-zinc-200 dark:border-zinc-800">
             <button
               onClick={() => setActiveTab('basics')}
               className={`font-mono text-[10px] font-bold uppercase tracking-widest pb-4 transition-all cursor-pointer bg-transparent border-0 ${
@@ -422,7 +430,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
             </button>
           </div>
 
-          <div className="px-margin-edge py-10 max-w-2xl mx-auto w-full text-left flex-1">
+          <div className="px-4 sm:px-8 py-8 max-w-2xl mx-auto w-full text-left flex-1">
             
             <AnimatePresence mode="wait">
               {/* BASICS TAB */}
@@ -586,21 +594,21 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                             onClick={() => handleApplyTemplate('exhibition')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Exhibition Vernissage
+                            Afrobeats Night
                           </button>
                           <button
                             type="button"
                             onClick={() => handleApplyTemplate('salon')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Nordic Salon
+                            Tech Meetup
                           </button>
                           <button
                             type="button"
                             onClick={() => handleApplyTemplate('performance')}
                             className="bg-white dark:bg-black hover:bg-[#a5351c] hover:text-white dark:hover:bg-[#a5351c] px-3 py-1.5 border border-zinc-200 dark:border-zinc-800 font-mono text-[9px] font-bold uppercase tracking-wide cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
                           >
-                            Chamber Ritual
+                            Jollof & Jazz
                           </button>
                         </div>
                       </div>
@@ -790,9 +798,9 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                         {/* Split row for Price and Capacity */}
                         <div className="flex gap-6">
                           <div className="flex-1 relative">
-                            <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Price (USD)</label>
+                            <label className="block font-mono text-[10px] font-bold uppercase text-zinc-400 dark:text-zinc-500 mb-1">Price (₦)</label>
                             <div className="relative flex items-center">
-                              <span className="absolute left-0 font-mono text-zinc-400 text-sm">$</span>
+                              <span className="absolute left-0 font-mono text-zinc-400 text-sm">₦</span>
                               <input
                                   className="w-full border-b border-zinc-200 dark:border-zinc-800 border-x-0 border-t-0 bg-transparent pl-4 pr-0 py-2.5 text-base font-mono text-zinc-900 dark:text-white focus:border-[#a5351c] focus:ring-0 transition-colors"
                                   type="number"
@@ -1340,12 +1348,12 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                                   value={advancedCSS}
                                   onChange={(e) => setAdvancedCSS(e.target.value)}
                                   rows={4}
-                                  className="w-full border border-zinc-200 dark:border-zinc-800 bg-[#faf9f6] dark:bg-zinc-950 p-3 text-xs font-mono text-zinc-800 dark:text-zinc-200 focus:border-[#a5351c] focus:ring-0 transition-colors resize-none leading-relaxed"
+                                  className="w-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 p-3 text-xs font-mono text-zinc-800 dark:text-zinc-200 focus:border-[#a5351c] focus:ring-0 transition-colors resize-none leading-relaxed"
                                   placeholder="/* Custom CSS variables */"
                                 />
                               </div>
                               
-                              <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-800 p-4 bg-[#faf9f6] dark:bg-zinc-900/40">
+                              <div className="flex items-center justify-between border border-zinc-200 dark:border-zinc-800 p-4 bg-zinc-50 dark:bg-zinc-900/40">
                                 <div className="space-y-0.5">
                                   <p className="font-serif text-xs font-semibold text-zinc-900 dark:text-white leading-tight">Serif Italic Displays</p>
                                   <p className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-normal">Forces visual title headers to render in classic italic serif style.</p>
@@ -1379,11 +1387,11 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
         </section>
 
         {/* RIGHT PANEL: Live Preview Container */}
-        <section className={`w-full md:w-1/2 h-full bg-[#f4f3f0] dark:bg-[#111111] flex flex-col relative ${
+        <section className={`w-full md:w-1/2 h-full bg-zinc-100 dark:bg-zinc-950 flex flex-col relative ${
           activeBuilderTab === 'preview' ? 'block' : 'hidden md:block'
         }`}>
           {/* Sticky header for Live Preview Options */}
-          <div className="h-16 flex items-center justify-between px-8 border-b border-[#e3e2df] dark:border-zinc-800 bg-[#f4f3f0]/90 dark:bg-[#111]/90 backdrop-blur-sm shrink-0 z-10 absolute top-0 w-full text-left">
+          <div className="h-16 flex items-center justify-between px-8 border-b border-zinc-200 dark:border-zinc-800 bg-[#f4f3f0]/90 dark:bg-[#111]/90 backdrop-blur-sm shrink-0 z-10 absolute top-0 w-full text-left">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-xs text-zinc-400">info</span>
               <span className="font-mono text-[9px] font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-widest">
@@ -1431,7 +1439,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.3 }}
-                  className={`bg-[#faf9f6] dark:bg-zinc-950 border border-[#e3e2df] dark:border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col shrink-0 transition-all duration-300 ${
+                  className={`bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col shrink-0 transition-all duration-300 ${
                     previewDevice === 'phone'
                       ? 'w-[375px] h-[640px] mb-8'
                       : 'w-full max-w-lg aspect-[3/4] mb-8'
@@ -1576,7 +1584,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.3 }}
-                  className={`bg-[#faf9f6] dark:bg-zinc-900 border border-[#e3e2df] dark:border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col shrink-0 transition-all duration-300 ${
+                  className={`bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl relative overflow-hidden flex flex-col shrink-0 transition-all duration-300 ${
                     previewDevice === 'phone'
                       ? 'w-[375px] h-[640px] mb-8'
                       : 'w-full max-w-lg aspect-[3/4] mb-8'
@@ -1634,7 +1642,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     <div className="bg-black/85 backdrop-blur-md border border-white/10 p-4 mt-2 flex justify-between items-center">
                       <div>
                         <span className="font-mono text-[7px] text-zinc-400 uppercase tracking-widest block">Admission</span>
-                        <span className="font-serif text-base text-white">${previewTotal > 0 ? previewTotal.toFixed(2) : (tiers[0]?.price || 45).toFixed(2)}</span>
+                        <span className="font-serif text-base text-white">₦{previewTotal > 0 ? previewTotal.toLocaleString() : (tiers[0]?.price || 5000).toLocaleString()}</span>
                       </div>
                       <button
                         type="button"
@@ -1656,7 +1664,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.3 }}
-                  className={`bg-[#faf9f6] border border-[#e3e2df] shadow-2xl relative overflow-hidden flex flex-col shrink-0 text-left ${
+                  className={`bg-zinc-50 border border-zinc-200 shadow-2xl relative overflow-hidden flex flex-col shrink-0 text-left ${
                     previewDevice === 'phone'
                       ? 'w-[375px] h-[640px] mb-8'
                       : 'w-full max-w-lg aspect-[3/4] mb-8'
@@ -1673,7 +1681,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                   </div>
 
                   {/* Scrollable Gallery Catalog Content */}
-                  <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#faf9f6] no-scrollbar">
+                  <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-zinc-50 no-scrollbar">
                     
                     {/* Centered offset photo frame */}
                     <div className="relative border border-zinc-300 p-2.5 bg-white shadow-sm">
@@ -1739,7 +1747,7 @@ export default function OrganizerEventBuilder({ events, onAddEvent }: OrganizerE
                     <div>
                       <span className="font-mono text-[7px] text-zinc-400 uppercase tracking-widest block">Starting From</span>
                       <span className="font-mono text-xs font-bold text-zinc-950">
-                        ${(tiers[0]?.price || 45).toFixed(2)} USD
+                        ₦{(tiers[0]?.price || 5000).toLocaleString()}
                       </span>
                     </div>
 
