@@ -55,7 +55,7 @@ export default function Navbar() {
           <div className="flex h-8 w-8 items-center justify-center bg-zinc-900 dark:bg-white text-white dark:text-black font-black text-base">
             E
           </div>
-          <span className="font-sans text-lg font-bold tracking-[0.2em] text-zinc-900 dark:text-white hidden min-[400px]:inline">
+          <span className="font-sans text-lg font-black tracking-[0.15em] text-zinc-900 dark:text-white hidden min-[400px]:inline">
             EVORA
           </span>
         </Link>
