@@ -34,7 +34,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [isTimeframeOpen, setIsTimeframeOpen] = useState(false);
 
-  // Identify first active featured event (e.g. ev-1), which will be shown as the grand "Featured Residency"
+  // Identify first active featured event (e.g. ev-1), which will be shown as the grand "Featured Event"
   const featuredEvent = useMemo(() => {
     return events.find((e) => e.id === 'ev-1') || events[0];
   }, [events]);
@@ -130,7 +130,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
   return (
     <div className="bg-transparent pb-24 transition-colors duration-300">
       
-      {/* Featured Residency Hero Banner Section */}
+      {/* Featured Event Hero Banner Section */}
       {featuredEvent && (
         <section className="w-full px-4 sm:px-6 lg:px-8 pt-8 pb-16 max-w-7xl mx-auto">
           <motion.div
@@ -138,7 +138,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
             onClick={() => onSelectEvent(featuredEvent)}
-            className="relative w-full h-[520px] md:h-[650px] border border-zinc-200 dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-950 overflow-hidden flex items-end cursor-pointer group"
+            className="relative w-full h-[360px] sm:h-[520px] md:h-[650px] border border-zinc-200 dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-950 overflow-hidden flex items-end cursor-pointer group"
           >
             {/* Grayscale/Saturation transition on image */}
             <img 
@@ -151,12 +151,12 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
             {/* Elegant vignette linear shadow overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent z-10" />
             
-            <div className="relative z-20 w-full p-6 sm:p-10 md:p-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div className="relative z-20 w-full p-5 sm:p-10 md:p-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6">
               <div className="max-w-2xl text-left space-y-4">
                 <span className="inline-block border border-white px-3 py-1 font-mono text-[10px] font-bold text-white uppercase tracking-widest backdrop-blur-md bg-black/30">
-                  Featured Residency
+                  Featured Event
                 </span>
-                <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-light tracking-tighter leading-none">
+                <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-medium tracking-tight leading-[1.1]">
                   {featuredEvent.title}
                 </h1>
                 <p className="font-sans text-white/80 text-xs sm:text-sm font-light max-w-md leading-relaxed">
@@ -167,7 +167,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
               <div className="flex flex-col items-start md:items-end gap-4 text-left md:text-right w-full md:w-auto shrink-0 border-t border-white/20 md:border-t-0 pt-4 md:pt-0">
                 <div className="text-white">
                   <p className="text-[10px] font-mono uppercase tracking-widest text-white/60 mb-1">
-                    Next Immersion Event
+                    Coming Up
                   </p>
                   <p className="font-serif text-lg sm:text-xl md:text-2xl font-light">
                     {featuredEvent.date}
@@ -189,17 +189,17 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
       )}
 
       {/* Dynamic Sticky Filter controls & view switcher */}
-      <section className="px-4 sm:px-6 lg:px-8 mb-12 max-w-7xl mx-auto">
-        <div className="w-full border-y border-zinc-200 dark:border-zinc-900 py-4 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-30 px-3">
+      <section className="px-4 sm:px-6 lg:px-8 mb-6 sm:mb-12 max-w-7xl mx-auto">
+        <div className="w-full border-y border-zinc-200 dark:border-zinc-900 py-3 flex flex-row flex-wrap justify-between items-center gap-2 sm:gap-4 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-14 z-30 px-3">
           
           {/* Filters Cluster */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-left">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-6 text-left">
             
             {/* Inline Search Bar */}
-            <div className="relative min-w-[180px] max-w-xs">
+            <div className="relative min-w-[120px] sm:min-w-[180px] max-w-xs">
               <input
                 type="text"
-                placeholder="Search rituals..."
+                placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-900 dark:focus:border-white pb-1.5 pl-0 pr-6 text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-0 rounded-none"
@@ -401,7 +401,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-12 gap-y-12 gap-x-8"
+              className="grid grid-cols-1 md:grid-cols-12 gap-y-6 sm:gap-y-12 gap-x-8"
             >
               {regularEvents.length > 0 ? (
                 regularEvents.slice(0, visibleCount).map((event, idx) => {
@@ -469,7 +469,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
                 })
               ) : (
                 <div className="col-span-12 py-20 text-center font-serif text-zinc-500 italic text-lg font-light">
-                  No matching electronic experiences found on active registries.
+                  No events found matching your search.
                 </div>
               )}
             </motion.div>
@@ -562,7 +562,7 @@ export default function ClientStorefront({ events, onSelectEvent }: ClientStoref
                 })
               ) : (
                 <div className="py-20 text-center font-serif text-zinc-500 italic text-lg font-light">
-                  No matching rituals discovered.
+                  No events found matching your search.
                 </div>
               )}
             </motion.div>

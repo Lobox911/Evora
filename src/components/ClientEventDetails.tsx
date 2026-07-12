@@ -23,8 +23,8 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
     const current = selectedQuantities[tierId] || 0;
     const next = Math.max(0, current + delta);
     const available = tier.capacity - tier.soldCount;
-    if (next > available) return; // Can't exceed remaining capacity
-    if (next > 5) return; // Limit 5 per purchase
+    if (next > available) return;
+    if (next > 5) return;
     
     setSelectedQuantities({
       ...selectedQuantities,
@@ -44,7 +44,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email) {
-      showAlert('Required Information', 'Please enter your name and email address to proceed with the registration.', 'error');
+      showAlert('Required Information', 'Please enter your name and email address to proceed.', 'error');
       return;
     }
 
@@ -79,7 +79,6 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
         return;
       }
 
-      // Build legacy attendees from API response
       const newAttendees: Attendee[] = data.tickets.map((t: any) => ({
         id: t.id,
         name: t.attendeeName,
@@ -92,7 +91,6 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
         eventTitle: event.title,
       }));
 
-      // Update tier counts locally
       const updatedTiers = event.tiers.map((t) => {
         const qty = selectedQuantities[t.id] || 0;
         if (qty > 0) {
@@ -124,7 +122,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
 
   if (purchasedAttendees) {
     return (
-      <div className="bg-transparent py-16 flex items-center justify-center transition-colors duration-300">
+      <div className="bg-transparent py-10 sm:py-16 flex items-center justify-center transition-colors duration-300">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -132,24 +130,24 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
           className="max-w-lg w-full mx-auto px-4"
         >
           {/* Header */}
-          <div className="text-center mb-12">
-            <div className="mx-auto h-12 w-12 border border-emerald-500 flex items-center justify-center mb-6">
+          <div className="text-center mb-10">
+            <div className="mx-auto h-12 w-12 border border-emerald-500 flex items-center justify-center mb-5">
               <CheckCircle className="h-6 w-6 text-emerald-500" />
             </div>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-2">
+            <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-emerald-600 mb-2">
               Confirmed
             </p>
-            <h2 className="font-serif text-3xl font-light text-zinc-900 dark:text-white mb-3">
+            <h2 className="font-serif text-2xl sm:text-3xl font-medium text-zinc-900 dark:text-white mb-3">
               You're In
             </h2>
-            <p className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+            <p className="font-mono text-[11px] text-zinc-500 uppercase tracking-wider">
               Confirmation sent to{' '}
-              <span className="text-zinc-900 dark:text-white">{formData.email}</span>
+              <span className="text-zinc-900 dark:text-white font-bold">{formData.email}</span>
             </p>
           </div>
 
           {/* Tickets */}
-          <div className="space-y-4 mb-10">
+          <div className="space-y-4 mb-8">
             {purchasedAttendees.map((at, i) => (
               <motion.div
                 key={at.id}
@@ -158,18 +156,18 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                 transition={{ duration: 0.4, delay: 0.2 + i * 0.08, ease: [0.23, 1, 0.32, 1] }}
                 className="border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-950"
               >
-                <div className="p-6 flex items-start justify-between gap-6">
-                  <div className="space-y-3 flex-1 min-w-0">
+                <div className="p-5 sm:p-6 flex items-start justify-between gap-4 sm:gap-6">
+                  <div className="space-y-2.5 flex-1 min-w-0">
                     <div className="flex items-center gap-3">
-                      <span className="font-mono text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400">
+                      <span className="font-mono text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400">
                         {at.ticketClass}
                       </span>
                     </div>
-                    <h4 className="font-serif text-lg font-light text-zinc-900 dark:text-white">
+                    <h4 className="font-serif text-base sm:text-lg font-medium text-zinc-900 dark:text-white">
                       {event.title}
                     </h4>
-                    <div className="space-y-1">
-                      <p className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+                    <div className="space-y-0.5">
+                      <p className="font-mono text-[11px] text-zinc-600 dark:text-zinc-400 uppercase tracking-wider font-medium">
                         {at.name}
                       </p>
                       <p className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
@@ -180,8 +178,8 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
 
                   {/* QR Code */}
                   <div className="shrink-0 flex flex-col items-center">
-                    <div className="w-20 h-20 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
-                      <svg width="56" height="56" viewBox="0 0 100 100" className="text-black dark:text-white">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+                      <svg width="48" height="48" viewBox="0 0 100 100" className="text-black dark:text-white">
                         <rect x="0" y="0" width="25" height="25" fill="currentColor" />
                         <rect x="3" y="3" width="19" height="19" fill="white" />
                         <rect x="7" y="7" width="11" height="11" fill="currentColor" />
@@ -205,7 +203,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                         <rect x="55" y="85" width="15" height="10" fill="currentColor" />
                       </svg>
                     </div>
-                    <p className="font-mono text-[8px] text-zinc-400 uppercase tracking-wider mt-1.5 truncate max-w-[80px]">
+                    <p className="font-mono text-[9px] text-zinc-400 uppercase tracking-wider mt-1.5 truncate max-w-[80px]">
                       {at.id.slice(0, 8)}
                     </p>
                   </div>
@@ -215,16 +213,16 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleReset}
-              className="flex-1 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white py-3.5 font-mono text-[10px] font-bold uppercase tracking-wider hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
+              className="flex-1 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white py-3.5 font-mono text-[11px] font-bold uppercase tracking-wider hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
             >
               Back to Events
             </button>
             <button
               onClick={() => showToast('Ticket PDF saved to downloads.', 'success')}
-              className="flex-1 bg-zinc-900 dark:bg-white text-white dark:text-black py-3.5 font-mono text-[10px] font-bold uppercase tracking-wider hover:bg-[#D4573B] dark:hover:bg-[#D4573B] dark:hover:text-white transition-colors flex items-center justify-center gap-2"
+              className="flex-1 bg-zinc-900 dark:bg-white text-white dark:text-black py-3.5 font-mono text-[11px] font-bold uppercase tracking-wider hover:bg-[#D4573B] dark:hover:bg-[#D4573B] dark:hover:text-white transition-colors flex items-center justify-center gap-2"
             >
               <Download className="h-3.5 w-3.5" />
               Download PDF
@@ -240,28 +238,28 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="bg-transparent py-8 transition-colors duration-300"
+      className="bg-transparent py-6 sm:py-8 transition-colors duration-300"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         {/* Back Link */}
         <button
           onClick={onBack}
-          className="group flex items-center text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest gap-2 mb-8 transition-colors"
+          className="group flex items-center text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest gap-2 mb-6 sm:mb-8 transition-colors font-bold"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          <span>Back to Grid</span>
+          <span>Back to Events</span>
         </button>
 
-        <div className="grid lg:grid-cols-12 gap-10">
+        <div className="grid lg:grid-cols-12 gap-6 sm:gap-10">
           
           {/* Main Info Column */}
-          <div className="lg:col-span-7 space-y-8">
-            <div className="overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-900 bg-white/20 dark:bg-zinc-950/20">
+          <div className="lg:col-span-7 space-y-6 sm:space-y-8">
+            <div className="overflow-hidden border border-zinc-200 dark:border-zinc-900 bg-white/20 dark:bg-zinc-950/20">
               <img
                 src={event.image}
                 alt={event.title}
-                className="w-full h-80 object-cover"
+                className="w-full h-56 sm:h-80 object-cover"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -271,70 +269,70 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                 {event.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-zinc-100 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 px-3 py-1 text-4xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+                    className="bg-zinc-100 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
-              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-zinc-900 dark:text-white mb-4 leading-tight">
+              <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight text-zinc-900 dark:text-white mb-3 leading-tight">
                 {event.title}
               </h1>
-              <p className="text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm font-mono leading-normal max-w-2xl mb-6">
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm font-normal leading-relaxed max-w-2xl mb-6">
                 {event.subtitle}
               </p>
 
               {/* Event Logistics Info */}
-              <div className="grid sm:grid-cols-3 gap-4 border-y border-zinc-200 dark:border-zinc-900 py-6 my-8">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-y border-zinc-200 dark:border-zinc-900 py-5 my-6">
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-2 text-zinc-600 dark:text-zinc-400 shadow-2xs">
+                  <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-2.5 text-zinc-600 dark:text-zinc-400">
                     <Calendar className="h-4 w-4" />
                   </div>
                   <div>
-                    <p className="text-5xs text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">Date</p>
-                    <p className="text-2xs font-semibold text-zinc-800 dark:text-zinc-200">{event.date}</p>
+                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest font-bold">Date</p>
+                    <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{event.date}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-2 text-zinc-600 dark:text-zinc-400 shadow-2xs">
+                  <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-2.5 text-zinc-600 dark:text-zinc-400">
                     <Clock className="h-4 w-4" />
                   </div>
                   <div>
-                    <p className="text-5xs text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">Duration</p>
-                    <p className="text-2xs font-semibold text-zinc-800 dark:text-zinc-200">{event.time}</p>
+                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest font-bold">Time</p>
+                    <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">{event.time}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-2 text-zinc-600 dark:text-zinc-400 shadow-2xs">
+                  <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-900 p-2.5 text-zinc-600 dark:text-zinc-400">
                     <MapPin className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-5xs text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">Venue</p>
-                    <p className="text-2xs font-semibold text-zinc-800 dark:text-zinc-200 truncate">{event.location}</p>
+                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest font-bold">Venue</p>
+                    <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate">{event.location}</p>
                   </div>
                 </div>
               </div>
 
               {/* Description */}
-              <div className="space-y-4">
-                <h3 className="font-serif text-lg font-light tracking-tight text-zinc-900 dark:text-white">
-                  The Experience
+              <div className="space-y-3">
+                <h3 className="font-serif text-lg font-medium tracking-tight text-zinc-900 dark:text-white">
+                  About This Event
                 </h3>
-                <p className="text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm font-light leading-relaxed whitespace-pre-line">
+                <p className="text-zinc-600 dark:text-zinc-400 text-sm font-normal leading-relaxed whitespace-pre-line">
                   {event.description}
                 </p>
               </div>
 
               {/* Terms */}
-              <div className="rounded-xl border border-zinc-200 dark:border-zinc-950 bg-zinc-100/50 dark:bg-zinc-950/20 p-4 mt-8 space-y-2">
-                <p className="text-5xs text-zinc-500 dark:text-zinc-400 font-mono uppercase tracking-widest flex items-center gap-1.5">
+              <div className="border border-zinc-200 dark:border-zinc-950 bg-zinc-50 dark:bg-zinc-950/20 p-4 mt-6 space-y-2">
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono font-bold uppercase tracking-widest flex items-center gap-1.5">
                   <ShieldCheck className="h-3.5 w-3.5 text-zinc-500" />
-                  ENTRY CONTRACT
+                  Terms & Conditions
                 </p>
-                <p className="text-5xs text-zinc-500 leading-normal">
-                  All sales are final. Over-18s only. High-fidelity earplugs are provided complimentary at the gate. Zero strobe policy inside, kinetic projection maps only.
+                <p className="text-[11px] text-zinc-500 leading-relaxed">
+                  All sales are final. Tickets are non-transferable. Please arrive 30 minutes before the event starts. Valid ID required at entry.
                 </p>
               </div>
             </div>
@@ -342,18 +340,18 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
 
           {/* Ticket Selection Panel Column */}
           <div className="lg:col-span-5">
-            <div className="sticky top-24 rounded-2xl border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-950 p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="sticky top-20 border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-950 p-5 sm:p-8 space-y-5 shadow-sm">
               <div>
-                <h3 className="font-serif text-xl font-light tracking-tight text-zinc-900 dark:text-white mb-1">
-                  Access Admissions
+                <h3 className="font-serif text-xl font-medium tracking-tight text-zinc-900 dark:text-white mb-1">
+                  Get Tickets
                 </h3>
-                <p className="text-zinc-500 text-5xs font-mono uppercase tracking-[0.15em]">
-                  Secure your passage to {event.title}.
+                <p className="text-zinc-500 text-[11px] font-mono font-bold uppercase tracking-wider">
+                  Select your tickets for {event.title}.
                 </p>
               </div>
 
               {/* Tiers List */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {event.tiers.map((tier) => {
                   const qty = selectedQuantities[tier.id] || 0;
                   const isSoldOut = tier.status === 'sold_out';
@@ -362,7 +360,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                   return (
                     <div
                       key={tier.id}
-                      className={`rounded-xl border p-4 transition-all duration-300 relative ${
+                      className={`border p-4 transition-all duration-300 relative ${
                         isSoldOut
                           ? 'border-zinc-200 dark:border-zinc-900 bg-zinc-50 dark:bg-black/40 opacity-50'
                           : qty > 0
@@ -373,28 +371,28 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                       <div className="flex justify-between items-start gap-3">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-sans text-xs sm:text-sm font-medium text-zinc-900 dark:text-white">
+                            <span className="font-sans text-sm font-semibold text-zinc-900 dark:text-white">
                               {tier.name}
                             </span>
                             {remaining < 20 && remaining > 0 && (
-                              <span className="rounded bg-amber-500/10 px-1.5 py-0.5 text-5xs font-mono uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                              <span className="bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">
                                 Low Stock
                               </span>
                             )}
                           </div>
                           {tier.description && (
-                            <p className="text-zinc-600 dark:text-zinc-400 text-4xs font-light max-w-xs leading-normal">
+                            <p className="text-zinc-600 dark:text-zinc-400 text-xs font-normal max-w-xs leading-relaxed">
                               {tier.description}
                             </p>
                           )}
                         </div>
 
                         <div className="text-right shrink-0">
-                          <p className={`font-mono text-sm font-semibold ${isSoldOut ? 'line-through text-zinc-400 dark:text-zinc-500' : 'text-zinc-900 dark:text-white'}`}>
+                          <p className={`font-mono text-sm font-bold ${isSoldOut ? 'line-through text-zinc-400 dark:text-zinc-500' : 'text-zinc-900 dark:text-white'}`}>
                             ${tier.price}
                           </p>
                           {!isSoldOut && (
-                            <p className="text-5xs font-mono text-zinc-500 uppercase mt-0.5">
+                            <p className="text-[10px] font-mono text-zinc-500 uppercase mt-0.5 font-bold">
                               {remaining} left
                             </p>
                           )}
@@ -402,13 +400,13 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                       </div>
 
                       {/* Ticket Quantity Selector */}
-                      <div className="mt-4 flex justify-between items-center border-t border-zinc-100 dark:border-zinc-900/80 pt-3">
-                        <span className="text-5xs font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-                          Quantity Limit: 5
+                      <div className="mt-3 flex justify-between items-center border-t border-zinc-100 dark:border-zinc-900/80 pt-3">
+                        <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-widest font-bold">
+                          Max: 5
                         </span>
 
                         {isSoldOut ? (
-                          <span className="text-4xs font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-widest font-bold">
+                          <span className="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 uppercase tracking-widest font-bold">
                             Sold Out
                           </span>
                         ) : (
@@ -416,17 +414,17 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                             <button
                               onClick={() => handleQtyChange(tier.id, -1, tier)}
                               disabled={qty === 0}
-                              className="h-7 w-7 rounded-full border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-500 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors disabled:opacity-30 disabled:hover:border-zinc-300"
+                              className="h-8 w-8 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-500 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors disabled:opacity-30 font-bold text-sm"
                             >
-                              -
+                              −
                             </button>
-                            <span className="font-mono text-xs font-semibold text-zinc-900 dark:text-white w-4 text-center">
+                            <span className="font-mono text-sm font-bold text-zinc-900 dark:text-white w-4 text-center">
                               {qty}
                             </span>
                             <button
                               onClick={() => handleQtyChange(tier.id, 1, tier)}
                               disabled={qty >= remaining}
-                              className="h-7 w-7 rounded-full border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-500 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors disabled:opacity-30 disabled:hover:border-zinc-300"
+                              className="h-8 w-8 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-500 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors disabled:opacity-30 font-bold text-sm"
                             >
                               +
                             </button>
@@ -440,24 +438,24 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
 
               {/* Selection Summary */}
               {totalTickets > 0 && (
-                <div className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-800 p-4 space-y-3.5 bg-zinc-50/50 dark:bg-black/40">
-                  <div className="flex justify-between text-2xs text-zinc-600 dark:text-zinc-400">
-                    <span>Admissions ({totalTickets})</span>
-                    <span className="font-mono text-zinc-900 dark:text-white">${subtotal.toFixed(2)}</span>
+                <div className="border border-dashed border-zinc-300 dark:border-zinc-800 p-4 space-y-3 bg-zinc-50/50 dark:bg-black/40">
+                  <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+                    <span>Tickets ({totalTickets})</span>
+                    <span className="font-mono text-zinc-900 dark:text-white font-bold">${subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-2xs text-zinc-600 dark:text-zinc-400">
-                    <span>Compliance & Service Fee</span>
-                    <span className="font-mono text-zinc-900 dark:text-white">${serviceFee.toFixed(2)}</span>
+                  <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+                    <span>Service Fee</span>
+                    <span className="font-mono text-zinc-900 dark:text-white font-bold">${serviceFee.toFixed(2)}</span>
                   </div>
-                  <div className="border-t border-zinc-200 dark:border-zinc-900 pt-3 flex justify-between text-xs font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
-                    <span>Grand Total</span>
+                  <div className="border-t border-zinc-200 dark:border-zinc-900 pt-3 flex justify-between text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider">
+                    <span>Total</span>
                     <span className="font-mono text-base font-bold text-zinc-900 dark:text-white">${orderTotal.toFixed(2)}</span>
                   </div>
 
                   {!isCheckoutOpen ? (
                     <button
                       onClick={() => setIsCheckoutOpen(true)}
-                      className="w-full rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-black py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm"
+                      className="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 text-white dark:text-black py-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm"
                     >
                       <Ticket className="h-4 w-4" />
                       Proceed to Checkout
@@ -465,38 +463,38 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                   ) : (
                     <form onSubmit={handleCheckoutSubmit} className="space-y-4 border-t border-zinc-200 dark:border-zinc-900 pt-4 text-left">
                       <div>
-                        <label className="block text-4xs font-mono text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-1.5">
-                          Delegate Legal Name
+                        <label className="block text-[10px] font-mono text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">
+                          Full Name
                         </label>
                         <input
                           type="text"
                           required
-                          placeholder="Sarah Jenkins"
+                          placeholder="Chinedu Okafor"
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-black px-3.5 py-2 text-xs font-light text-zinc-900 dark:text-white focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500"
+                          className="w-full border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-black px-3.5 py-3 text-sm font-normal text-zinc-900 dark:text-white focus:outline-none focus:border-zinc-500 dark:focus:border-zinc-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-4xs font-mono text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-1.5">
-                          Delivery Email Address
+                        <label className="block text-[10px] font-mono text-zinc-500 dark:text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">
+                          Email Address
                         </label>
                         <input
                           type="email"
                           required
-                          placeholder="sarah.j@ambientspace.co"
+                          placeholder="chinedu@gmail.com"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-black px-3.5 py-2 text-xs font-light text-zinc-900 dark:text-white focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500"
+                          className="w-full border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-black px-3.5 py-3 text-sm font-normal text-zinc-900 dark:text-white focus:outline-none focus:border-zinc-500 dark:focus:border-zinc-500"
                         />
                       </div>
 
-                      {/* Mock Credit Card Inputs */}
-                      <div className="space-y-2 rounded-lg border border-zinc-200 dark:border-zinc-900 bg-zinc-100/60 dark:bg-black/60 p-3">
-                        <p className="text-5xs font-mono text-zinc-500 uppercase tracking-widest flex items-center gap-1.5 mb-1">
+                      {/* Sandbox Payment Info */}
+                      <div className="space-y-2 border border-zinc-200 dark:border-zinc-900 bg-zinc-50 dark:bg-black/60 p-3">
+                        <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest flex items-center gap-1.5 mb-1 font-bold">
                           <CreditCard className="h-3 w-3 text-zinc-400 dark:text-zinc-500" />
-                          Complimentary Sandbox Card
+                          Sandbox Payment (Demo)
                         </p>
                         
                         <div className="grid grid-cols-3 gap-2">
@@ -505,7 +503,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                               type="text"
                               value={formData.cardNum}
                               onChange={(e) => setFormData({ ...formData, cardNum: e.target.value })}
-                              className="w-full border-none bg-transparent px-1 py-0.5 text-xs font-mono text-zinc-600 dark:text-zinc-400 focus:outline-none"
+                              className="w-full border-none bg-transparent px-1 py-1 text-sm font-mono text-zinc-600 dark:text-zinc-400 focus:outline-none"
                               placeholder="Card Number"
                             />
                           </div>
@@ -514,7 +512,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                               type="text"
                               value={formData.cardExpiry}
                               onChange={(e) => setFormData({ ...formData, cardExpiry: e.target.value })}
-                              className="w-full border-none bg-transparent px-1 py-0.5 text-xs font-mono text-zinc-600 dark:text-zinc-400 focus:outline-none"
+                              className="w-full border-none bg-transparent px-1 py-1 text-sm font-mono text-zinc-600 dark:text-zinc-400 focus:outline-none"
                               placeholder="Expiry"
                             />
                           </div>
@@ -523,7 +521,7 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                               type="text"
                               value={formData.cardCvc}
                               onChange={(e) => setFormData({ ...formData, cardCvc: e.target.value })}
-                              className="w-full border-none bg-transparent px-1 py-0.5 text-xs font-mono text-zinc-600 dark:text-zinc-400 focus:outline-none text-right"
+                              className="w-full border-none bg-transparent px-1 py-1 text-sm font-mono text-zinc-600 dark:text-zinc-400 focus:outline-none text-right"
                               placeholder="CVC"
                             />
                           </div>
@@ -533,14 +531,14 @@ export default function ClientEventDetails({ event, onBack, onPurchaseSuccess }:
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 disabled:bg-zinc-200 dark:disabled:bg-zinc-800 text-white dark:text-black py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
+                        className="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-100 disabled:bg-zinc-300 dark:disabled:bg-zinc-800 text-white dark:text-black py-3.5 text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
                       >
                         {isSubmitting ? (
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-white dark:border-black border-t-transparent" />
                         ) : (
                           <Sparkles className="h-4 w-4" />
                         )}
-                        <span>{isSubmitting ? 'Verifying Sandbox Payment...' : `Transmit $${orderTotal.toFixed(2)}`}</span>
+                        <span>{isSubmitting ? 'Processing Payment...' : `Pay $${orderTotal.toFixed(2)}`}</span>
                       </button>
                     </form>
                   )}
